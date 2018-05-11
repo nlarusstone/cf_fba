@@ -76,8 +76,8 @@ def build_medium(mod):
     metab_conc = map(lambda x: conc_to_flux(x) * -1, [1.2, 0.85, 0.85, 0.85, 0.33, 0.27, 1.50, 1.00, 130, 10, 12, 0.33])
     # TODO: map from conc to exchange fluxes
     
-    import Bio.PDB.Polypeptide
-    aas = map(lambda x: x.lower(), Bio.PDB.Polypeptide.aa3)
+    aa3 = ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU', 'MET', 'ASN', 'PRO', 'GLN', 'ARG', 'SER', 'THR', 'VAL', 'TRP', 'TYR']
+    aas = map(lambda x: x.lower(), aa3)
     aa_concs = {}
     for aa in aas:
         l_aa, d_aa = None, None
@@ -133,7 +133,10 @@ def gen_fluxes_addl_reactants(model, df):
 	    rxn = add_exchange(mod, metab_dict, additive=True)
 	    #mod.add_reactions(reaction_list=sol[0])
 	    sol = mod.optimize()
-	    objs.append(sol.objective_value)
+            if sol.status == 'infeasible' or np.isnan(sol.objective_value):
+                objs.append(0)
+            else:
+                objs.append(sol.objective_value)
             fluxes.append(sol.fluxes)
     return objs, fluxes
 
