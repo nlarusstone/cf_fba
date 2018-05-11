@@ -1,0 +1,1185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2" level="2" version="1">
+   <model id="CNA_stoichiometric_model" name="CNA_stoichiometric_model">
+      <listOfCompartments>
+         <compartment id="External_Species"/>
+         <compartment id="Internal_Species"/>
+      </listOfCompartments>
+      <listOfSpecies>
+         <species id="M_13dpg_c" name="Species1" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_2pg_c" name="Species2" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_3pg_c" name="Species3" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_6pgc_c" name="Species4" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_6pgl_c" name="Species5" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_ac_c" name="Species6" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_ac_e" name="Species7" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_ac_p" name="Species8" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_acald_c" name="Species9" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_acald_e" name="Species10" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_acald_p" name="Species11" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_accoa_c" name="Species12" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_acon_C_c" name="Species13" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_actp_c" name="Species14" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_adp_c" name="Species15" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_akg_c" name="Species16" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_akg_e" name="Species17" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_akg_p" name="Species18" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_amp_c" name="Species19" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_atp_c" name="Species20" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_cit_c" name="Species21" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_co2_c" name="Species22" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_co2_e" name="Species23" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_co2_p" name="Species24" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_coa_c" name="Species25" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_dhap_c" name="Species26" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_e4p_c" name="Species27" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_etoh_c" name="Species28" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_etoh_e" name="Species29" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_etoh_p" name="Species30" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_f6p_c" name="Species31" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_fdp_c" name="Species32" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_for_c" name="Species33" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_for_e" name="Species34" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_for_p" name="Species35" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_fum_c" name="Species36" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_g3p_c" name="Species37" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_g6p_c" name="Species38" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_glc_D_e" name="Species39" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_glc_D_p" name="Species40" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_gln_L_c" name="Species41" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_glu_L_c" name="Species42" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_glu_L_e" name="Species43" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_glu_L_p" name="Species44" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_glx_c" name="Species45" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_h2o_c" name="Species46" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_h2o_e" name="Species47" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_h2o_p" name="Species48" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_h_c" name="Species49" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_h_e" name="Species50" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_h_p" name="Species51" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_icit_c" name="Species52" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_lac_D_c" name="Species53" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_lac_D_e" name="Species54" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_lac_D_p" name="Species55" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_mal_L_c" name="Species56" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_nad_c" name="Species57" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_nadh_c" name="Species58" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_nadp_c" name="Species59" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_nadph_c" name="Species60" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_nh4_c" name="Species61" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_nh4_e" name="Species62" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_nh4_p" name="Species63" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_o2_c" name="Species64" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_o2_e" name="Species65" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_o2_p" name="Species66" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_oaa_c" name="Species67" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_pep_c" name="Species68" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_pi_c" name="Species69" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_pi_e" name="Species70" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_pi_p" name="Species71" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_pyr_c" name="Species72" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_pyr_e" name="Species73" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_pyr_p" name="Species74" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_q8_c" name="Species75" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_q8h2_c" name="Species76" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_r5p_c" name="Species77" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_ru5p_D_c" name="Species78" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_s7p_c" name="Species79" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_succ_c" name="Species80" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_succ_e" name="Species81" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_succ_p" name="Species82" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_succoa_c" name="Species83" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_xu5p_D_c" name="Species84" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="Bio" name="Species85" boundaryCondition="false" compartment="Internal_Species"/>
+         <species id="M_4hba_b" name="Species86" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_5drib_b" name="Species87" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_ac_b" name="Species88" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_acald_b" name="Species89" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_akg_b" name="Species90" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_ca2_b" name="Species91" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_cl_b" name="Species92" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_co2_b" name="Species93" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_cobalt2_b" name="Species94" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_cu2_b" name="Species95" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_etoh_b" name="Species96" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_fe2_b" name="Species97" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_fe3_b" name="Species98" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_for_b" name="Species99" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_glc_D_b" name="Species100" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_glu_L_b" name="Species101" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_h2_b" name="Species102" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_h2o_b" name="Species103" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_h_b" name="Species104" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_hmfurn_b" name="Species105" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_k_b" name="Species106" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_lac_D_b" name="Species107" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_mg2_b" name="Species108" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_mn2_b" name="Species109" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_mobd_b" name="Species110" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_nh4_b" name="Species111" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_o2_b" name="Species112" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_pi_b" name="Species113" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_pyr_b" name="Species114" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_so4_b" name="Species115" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_succ_b" name="Species116" boundaryCondition="true" compartment="External_Species"/>
+         <species id="M_zn2_b" name="Species117" boundaryCondition="true" compartment="External_Species"/>
+         <species id="Bio_ext" name="Species118" boundaryCondition="true" compartment="External_Species"/>
+      </listOfSpecies>
+      <listOfReactions>
+         <reaction id="R_ACALD" name="R_ACALD" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_acald_c" stoichiometry="1"/>
+               <speciesReference species="M_coa_c" stoichiometry="1"/>
+               <speciesReference species="M_nad_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_accoa_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_nadh_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ACALDtpp" name="R_ACALDtpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_acald_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_acald_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ACKr" name="R_ACKr" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_ac_c" stoichiometry="1"/>
+               <speciesReference species="M_atp_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_actp_c" stoichiometry="1"/>
+               <speciesReference species="M_adp_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ACONTa" name="R_ACONTa" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_cit_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_acon_C_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ACONTb" name="R_ACONTb" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_acon_C_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_icit_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ACt2rpp" name="R_ACt2rpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_ac_p" stoichiometry="1"/>
+               <speciesReference species="M_h_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_ac_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ADK1" name="R_ADK1" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_amp_c" stoichiometry="1"/>
+               <speciesReference species="M_atp_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_adp_c" stoichiometry="2"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_AKGDH" name="R_AKGDH" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_akg_c" stoichiometry="1"/>
+               <speciesReference species="M_coa_c" stoichiometry="1"/>
+               <speciesReference species="M_nad_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_co2_c" stoichiometry="1"/>
+               <speciesReference species="M_nadh_c" stoichiometry="1"/>
+               <speciesReference species="M_succoa_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_AKGt2rpp" name="R_AKGt2rpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_akg_p" stoichiometry="1"/>
+               <speciesReference species="M_h_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_akg_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ALCD2x" name="R_ALCD2x" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_etoh_c" stoichiometry="1"/>
+               <speciesReference species="M_nad_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_acald_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_nadh_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ATPM" name="R_ATPM" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_atp_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_adp_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_pi_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ATPS4rpp" name="R_ATPS4rpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_adp_c" stoichiometry="1"/>
+               <speciesReference species="M_h_p" stoichiometry="4"/>
+               <speciesReference species="M_pi_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_atp_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="3"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_CO2tpp" name="R_CO2tpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_co2_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_co2_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_CS" name="R_CS" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_accoa_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+               <speciesReference species="M_oaa_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_cit_c" stoichiometry="1"/>
+               <speciesReference species="M_coa_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_CYTBDpp" name="R_CYTBDpp" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_h_c" stoichiometry="2"/>
+               <speciesReference species="M_o2_c" stoichiometry="0.5"/>
+               <speciesReference species="M_q8h2_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+               <speciesReference species="M_h_p" stoichiometry="2"/>
+               <speciesReference species="M_q8_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_D_LACt2pp" name="R_D_LACt2pp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_h_p" stoichiometry="1"/>
+               <speciesReference species="M_lac_D_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_lac_D_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ENO" name="R_ENO" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_2pg_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+               <speciesReference species="M_pep_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ETOHt2rpp" name="R_ETOHt2rpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_etoh_p" stoichiometry="1"/>
+               <speciesReference species="M_h_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_etoh_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_ac_e_" name="R_EX_ac_e_" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_ac_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_ac_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_acald_e_" name="R_EX_acald_e_" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_acald_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_acald_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_akg_e_" name="R_EX_akg_e_" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_akg_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_akg_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_co2_e_" name="R_EX_co2_e_" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_co2_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_co2_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_etoh_e_" name="R_EX_etoh_e_" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_etoh_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_etoh_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_for_e_" name="R_EX_for_e_" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_for_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_for_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_glc_e_" name="R_EX_glc_e_" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_glc_D_b" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_glc_D_e" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_glu_L_e_" name="R_EX_glu_L_e_" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_glu_L_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_glu_L_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_h2o_e_" name="R_EX_h2o_e_" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_h2o_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h2o_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_h_e_" name="R_EX_h_e_" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_h_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_lac_D_e_" name="R_EX_lac_D_e_" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_lac_D_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_lac_D_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_nh4_e_" name="R_EX_nh4_e_" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_nh4_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_nh4_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_o2_e_" name="R_EX_o2_e_" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_o2_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_o2_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_pi_e_" name="R_EX_pi_e_" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_pi_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_pi_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_pyr_e_" name="R_EX_pyr_e_" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_pyr_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_pyr_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_succ_e_" name="R_EX_succ_e_" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_succ_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_succ_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_FBA" name="R_FBA" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_fdp_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_dhap_c" stoichiometry="1"/>
+               <speciesReference species="M_g3p_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_FBP" name="R_FBP" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_fdp_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_f6p_c" stoichiometry="1"/>
+               <speciesReference species="M_pi_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_FORt2pp" name="R_FORt2pp" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_for_p" stoichiometry="1"/>
+               <speciesReference species="M_h_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_for_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_FORtppi" name="R_FORtppi" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_for_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_for_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_FUM" name="R_FUM" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_fum_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_mal_L_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_G6PDH2r" name="R_G6PDH2r" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_g6p_c" stoichiometry="1"/>
+               <speciesReference species="M_nadp_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_6pgl_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_nadph_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_GAPD" name="R_GAPD" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_g3p_c" stoichiometry="1"/>
+               <speciesReference species="M_nad_c" stoichiometry="1"/>
+               <speciesReference species="M_pi_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_13dpg_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_nadh_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_GLCptspp" name="R_GLCptspp" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_glc_D_p" stoichiometry="1"/>
+               <speciesReference species="M_pep_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_g6p_c" stoichiometry="1"/>
+               <speciesReference species="M_pyr_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_GLNS" name="R_GLNS" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_atp_c" stoichiometry="1"/>
+               <speciesReference species="M_glu_L_c" stoichiometry="1"/>
+               <speciesReference species="M_nh4_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_adp_c" stoichiometry="1"/>
+               <speciesReference species="M_gln_L_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_pi_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_GLUDy" name="R_GLUDy" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_glu_L_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+               <speciesReference species="M_nadp_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_akg_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_nadph_c" stoichiometry="1"/>
+               <speciesReference species="M_nh4_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_GLUN" name="R_GLUN" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_gln_L_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_glu_L_c" stoichiometry="1"/>
+               <speciesReference species="M_nh4_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_GLUSy" name="R_GLUSy" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_akg_c" stoichiometry="1"/>
+               <speciesReference species="M_gln_L_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_nadph_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_glu_L_c" stoichiometry="2"/>
+               <speciesReference species="M_nadp_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_GLUt2rpp" name="R_GLUt2rpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_glu_L_p" stoichiometry="1"/>
+               <speciesReference species="M_h_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_glu_L_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_GND" name="R_GND" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_6pgc_c" stoichiometry="1"/>
+               <speciesReference species="M_nadp_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_co2_c" stoichiometry="1"/>
+               <speciesReference species="M_nadph_c" stoichiometry="1"/>
+               <speciesReference species="M_ru5p_D_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_H2Otpp" name="R_H2Otpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_h2o_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ICDHyr" name="R_ICDHyr" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_icit_c" stoichiometry="1"/>
+               <speciesReference species="M_nadp_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_akg_c" stoichiometry="1"/>
+               <speciesReference species="M_co2_c" stoichiometry="1"/>
+               <speciesReference species="M_nadph_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ICL" name="R_ICL" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_icit_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_glx_c" stoichiometry="1"/>
+               <speciesReference species="M_succ_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_LDH_D" name="R_LDH_D" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_lac_D_c" stoichiometry="1"/>
+               <speciesReference species="M_nad_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_nadh_c" stoichiometry="1"/>
+               <speciesReference species="M_pyr_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_MALS" name="R_MALS" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_accoa_c" stoichiometry="1"/>
+               <speciesReference species="M_glx_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_coa_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_mal_L_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_MDH" name="R_MDH" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_mal_L_c" stoichiometry="1"/>
+               <speciesReference species="M_nad_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_nadh_c" stoichiometry="1"/>
+               <speciesReference species="M_oaa_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ME1" name="R_ME1" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_mal_L_c" stoichiometry="1"/>
+               <speciesReference species="M_nad_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_co2_c" stoichiometry="1"/>
+               <speciesReference species="M_nadh_c" stoichiometry="1"/>
+               <speciesReference species="M_pyr_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ME2" name="R_ME2" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_mal_L_c" stoichiometry="1"/>
+               <speciesReference species="M_nadp_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_co2_c" stoichiometry="1"/>
+               <speciesReference species="M_nadph_c" stoichiometry="1"/>
+               <speciesReference species="M_pyr_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_NADH16pp" name="R_NADH16pp" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_h_c" stoichiometry="4"/>
+               <speciesReference species="M_nadh_c" stoichiometry="1"/>
+               <speciesReference species="M_q8_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_p" stoichiometry="3"/>
+               <speciesReference species="M_nad_c" stoichiometry="1"/>
+               <speciesReference species="M_q8h2_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_NADTRHD" name="R_NADTRHD" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_nad_c" stoichiometry="1"/>
+               <speciesReference species="M_nadph_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_nadh_c" stoichiometry="1"/>
+               <speciesReference species="M_nadp_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_NH4tpp" name="R_NH4tpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_nh4_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_nh4_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_O2tpp" name="R_O2tpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_o2_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_o2_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PDH" name="R_PDH" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_coa_c" stoichiometry="1"/>
+               <speciesReference species="M_nad_c" stoichiometry="1"/>
+               <speciesReference species="M_pyr_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_accoa_c" stoichiometry="1"/>
+               <speciesReference species="M_co2_c" stoichiometry="1"/>
+               <speciesReference species="M_nadh_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PFK" name="R_PFK" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_atp_c" stoichiometry="1"/>
+               <speciesReference species="M_f6p_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_adp_c" stoichiometry="1"/>
+               <speciesReference species="M_fdp_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PFL" name="R_PFL" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_coa_c" stoichiometry="1"/>
+               <speciesReference species="M_pyr_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_accoa_c" stoichiometry="1"/>
+               <speciesReference species="M_for_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PGI" name="R_PGI" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_g6p_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_f6p_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PGK" name="R_PGK" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_3pg_c" stoichiometry="1"/>
+               <speciesReference species="M_atp_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_13dpg_c" stoichiometry="1"/>
+               <speciesReference species="M_adp_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PGL" name="R_PGL" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_6pgl_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_6pgc_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PGM" name="R_PGM" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_2pg_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_3pg_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PIt2rpp" name="R_PIt2rpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_h_p" stoichiometry="1"/>
+               <speciesReference species="M_pi_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_pi_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PPC" name="R_PPC" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_co2_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+               <speciesReference species="M_pep_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_oaa_c" stoichiometry="1"/>
+               <speciesReference species="M_pi_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PPCK" name="R_PPCK" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_atp_c" stoichiometry="1"/>
+               <speciesReference species="M_oaa_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_adp_c" stoichiometry="1"/>
+               <speciesReference species="M_co2_c" stoichiometry="1"/>
+               <speciesReference species="M_pep_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PPS" name="R_PPS" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_atp_c" stoichiometry="1"/>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+               <speciesReference species="M_pyr_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_amp_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="2"/>
+               <speciesReference species="M_pep_c" stoichiometry="1"/>
+               <speciesReference species="M_pi_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PTAr" name="R_PTAr" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_accoa_c" stoichiometry="1"/>
+               <speciesReference species="M_pi_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_actp_c" stoichiometry="1"/>
+               <speciesReference species="M_coa_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PYK" name="R_PYK" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_adp_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_pep_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_atp_c" stoichiometry="1"/>
+               <speciesReference species="M_pyr_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PYRt2rpp" name="R_PYRt2rpp" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_h_p" stoichiometry="1"/>
+               <speciesReference species="M_pyr_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_pyr_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_RPE" name="R_RPE" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_ru5p_D_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_xu5p_D_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_RPI" name="R_RPI" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_r5p_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_ru5p_D_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_SUCCt2_2pp" name="R_SUCCt2_2pp" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_h_p" stoichiometry="2"/>
+               <speciesReference species="M_succ_p" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_c" stoichiometry="2"/>
+               <speciesReference species="M_succ_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_SUCCt3pp" name="R_SUCCt3pp" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_h_p" stoichiometry="1"/>
+               <speciesReference species="M_succ_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+               <speciesReference species="M_succ_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_SUCDi" name="R_SUCDi" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_q8_c" stoichiometry="1"/>
+               <speciesReference species="M_succ_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_fum_c" stoichiometry="1"/>
+               <speciesReference species="M_q8h2_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_SUCOAS" name="R_SUCOAS" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_atp_c" stoichiometry="1"/>
+               <speciesReference species="M_coa_c" stoichiometry="1"/>
+               <speciesReference species="M_succ_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_adp_c" stoichiometry="1"/>
+               <speciesReference species="M_pi_c" stoichiometry="1"/>
+               <speciesReference species="M_succoa_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_TALA" name="R_TALA" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_g3p_c" stoichiometry="1"/>
+               <speciesReference species="M_s7p_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_e4p_c" stoichiometry="1"/>
+               <speciesReference species="M_f6p_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_THD2pp" name="R_THD2pp" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_h_p" stoichiometry="2"/>
+               <speciesReference species="M_nadh_c" stoichiometry="1"/>
+               <speciesReference species="M_nadp_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_c" stoichiometry="2"/>
+               <speciesReference species="M_nad_c" stoichiometry="1"/>
+               <speciesReference species="M_nadph_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_TKT1" name="R_TKT1" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_r5p_c" stoichiometry="1"/>
+               <speciesReference species="M_xu5p_D_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_g3p_c" stoichiometry="1"/>
+               <speciesReference species="M_s7p_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_TKT2" name="R_TKT2" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_e4p_c" stoichiometry="1"/>
+               <speciesReference species="M_xu5p_D_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_f6p_c" stoichiometry="1"/>
+               <speciesReference species="M_g3p_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_TPI" name="R_TPI" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_dhap_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_g3p_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_RFD_new" name="R_RFD_new" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_fum_c" stoichiometry="1"/>
+               <speciesReference species="M_q8h2_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_q8_c" stoichiometry="1"/>
+               <speciesReference species="M_succ_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="Bio_T" name="Bio_T" reversible="false">
+            <listOfReactants>
+               <speciesReference species="Bio" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="Bio_ext" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_3HAD100_R_3HAD120_R_3HAD121_R_3HAD140_R_3HAD141_R_3HAD160_R_3HAD161_R_3HAD40_R_3HAD60_R_3HAD80_R_3OAR100_R_3OAR120_R_3OAR121_R_3OAR140_R_3OAR141_R_3OAR160_R_3OAR161_R_3OAR40_R_3OAR60_R_3OAR80_R_3OAS100_R_3OAS120_R_3OAS121_R_3OAS140_R_3OAS141_R_3OAS160_R_3OAS161_R_3OAS60_R_3OAS80_R_5DOAN_R_A5PISO_R_ACCOAC_R_ACGK_R_ACGS_R_ACHBS_R_ACLS_R_ACODA_R_ACOTA_R_ADCL_R_ADCS_R_ADNK1_R_ADSK_R_ADSL1r_R_ADSL2r_R_ADSS_R_AGPAT160_R_AGPAT161_R_AGPR_R_AHCYSNS_R_AICART_R_AIRC2_R_AIRC3_R_ALAALAr_R_ALAR_R_ALATA_L_R_AMPMS2_R_ANPRT_R_ANS_R_APRAUR_R_ARGSL_R_ARGSS_R_ASAD_R_ASNS2_R_ASP1DC_R_ASPCT_R_ASPK_R_ASPO5_R_ASPTA_R_ATPPRT_R_BPNT_R_CA2tex_R_CAt6pp_R_CBMKr_R_CDPMEK_R_CHORM_R_CHORS_R_CHRPL_R_CLt3_2pp_R_CLtex_R_COBALT2tex_R_COBALT2tpp_R_CPPPGO2_R_CTPS2_R_CU2tex_R_CU2tpp_R_CYSS_R_CYSTL_R_CYTK1_R_DALAt2pp_R_DAPDC_R_DAPE_R_DASYN160_R_DASYN161_R_DB4PS_R_DDPA_R_DHAD1_R_DHAD2_R_DHDPRy_R_DHDPS_R_DHFR_R_DHFS_R_DHNPA2_R_DHORD5_R_DHORTS_R_DHPPDA2_R_DHPS2_R_DHPTDCs_R_DHQS_R_DHQTi_R_DMATT_R_DM_4HBA_R_DM_5DRIB_R_DM_HMFURN_R_DNMPPA_R_DNTPPA_R_DPCOAK_R_DPR_R_DTMPK_R_DXPRIi_R_DXPS_R_E4PD_R_EAR100x_R_EAR120x_R_EAR121x_R_EAR140x_R_EAR141x_R_EAR160x_R_EAR161x_R_EAR40x_R_EAR60x_R_EAR80x_R_EX_ca2_e__R_EX_cl_e__R_EX_cobalt2_e__R_EX_cu2_e__R_EX_fe2_e__R_EX_fe3_e__R_EX_k_e__R_EX_mg2_e__R_EX_mn2_e__R_EX_mobd_e__R_EX_so4_e__R_EX_zn2_e__R_Ec_biomass_iAF1260_core_59p81M_R_FCLT_R_FE2tex_R_FE2tpp_R_FE3abcpp_R_FE3tex_R_FLDR_R_FMNAT_R_FRD2_R_FRD3_R_G1PACT_R_G1SAT_R_G3PAT160_R_G3PAT161_R_G3PD2_R_G5SADs_R_G5SD_R_GARFT_R_GART_R_GCALDD_R_GF6PTA_R_GHMT2r_R_GK1_R_GLU5K_R_GLUPRT_R_GLUR_R_GLUTRR_R_GLUTRS_R_GLYCTO4_R_GMPS2_R_GRTT_R_GRXR_R_GTHOr_R_GTPCI_R_GTPCII2_R_HBZOPT_R_HCO3E_R_HISTD_R_HISTP_R_HMBS_R_HPPK2_R_HSDy_R_HSK_R_HSST_R_HSTPT_R_IG3PS_R_IGPDH_R_IGPS_R_ILETA_R_IMPC_R_IMPD_R_IPDDI_R_IPDPS_R_IPMD_R_IPPMIa_R_IPPMIb_R_IPPS_R_K2L4Aabcpp_R_K2L4Atex_R_KARA1_R_KARA2_R_KAS15_R_KDOCT2_R_KDOPP_R_KDOPS_R_Kt2pp_R_Ktex_R_LEUTAi_R_LPADSS_R_MCOATA_R_MCTP1App_R_MECDPDH2_R_MECDPS_R_MEPCT_R_METAT_R_METS_R_MG2t3_2pp_R_MG2tex_R_MN2tpp_R_MNtex_R_MOAT_R_MOAT2_R_MOBDabcpp_R_MOBDtex_R_MOHMT_R_MPTG_R_MTHFC_R_MTHFD_R_MTHFR2_R_NADK_R_NADS1_R_NDPK1_R_NDPK2_R_NDPK3_R_NDPK4_R_NDPK6_R_NNATr_R_NNDPR_R_OCBT_R_OCTDPS_R_OHPBAT_R_OMCDC_R_OMPDC_R_OPHBDC_R_OPHHX3_R_ORPT_R_P5CR_R_PANTS_R_PAPPT3_R_PAPSR2_R_PDX5PO2_R_PDX5PS_R_PE160abcpp_R_PE161abcpp_R_PERD_R_PGAMT_R_PGCD_R_PHETA1_R_PItex_R_PMDPHT_R_PMPK_R_PNTK_R_PPBNGS_R_PPCDC_R_PPKr_R_PPM_R_PPNCL2_R_PPND_R_PPNDH_R_PPPGO3_R_PRAGSr_R_PRAIS_R_PRAIi_R_PRAMPC_R_PRASCSi_R_PRATPP_R_PRFGS_R_PRMICI_R_PRPPS_R_PSCVT_R_PSD160_R_PSD161_R_PSERT_R_PSP_L_R_PSSA160_R_PSSA161_R_PTPATi_R_PUNP1_R_QULNS_R_RBFK_R_RBFSa_R_RBFSb_R_RHCCE_R_RNTR1c_R_RNTR2c_R_RNTR3c_R_RNTR4c_R_SADT2_R_SDPDS_R_SDPTA_R_SERAT_R_SHCHD2_R_SHCHF_R_SHK3Dr_R_SHKK_R_SHSL1_R_SO4tex_R_SULRi_R_SULabcpp_R_T2DECAI_R_TDSK_R_THDPS_R_THRD_L_R_THRS_R_THRt2rpp_R_THRt4pp_R_THZPSN_R_TMDS_R_TMPK_R_TMPPP_R_TRPS2_R_TRPS3_R_TYRTA_R_U23GAAT_R_UAAGDS_R_UAGAAT_R_UAGCVT_R_UAGDP_R_UAGPT3_R_UAMAGS_R_UAMAS_R_UAPGR_R_UDCPDP_R_UDCPDPS_R_UGMDDS_R_UHGADA_R_UMPK_R_UPP3MT_R_UPP3S_R_UPPDC1_R_URIDK2r_R_USHD_R_VALTA_R_ZN2tpp_R_Zn2tex_lumped" name="R_3HAD100*R_3HAD120*R_3HAD121*R_3HAD140*R_3HAD141*R_3HAD160*R_3HAD161*R_3HAD40*R_3HAD60*R_3HAD80*R_3OAR100*R_3OAR120*R_3OAR121*R_3OAR140*R_3OAR141*R_3OAR160*R_3OAR161*R_3OAR40*R_3OAR60*R_3OAR80*R_3OAS100*R_3OAS120*R_3OAS121*R_3OAS140*R_3OAS141*R_3OAS160*R_3OAS161*R_3OAS60*R_3OAS80*R_5DOAN*R_A5PISO*R_ACCOAC*R_ACGK*R_ACGS*R_ACHBS*R_ACLS*R_ACODA*R_ACOTA*R_ADCL*R_ADCS*R_ADNK1*R_ADSK*R_ADSL1r*R_ADSL2r*R_ADSS*R_AGPAT160*R_AGPAT161*R_AGPR*R_AHCYSNS*R_AICART*R_AIRC2*R_AIRC3*R_ALAALAr*R_ALAR*R_ALATA_L*R_AMPMS2*R_ANPRT*R_ANS*R_APRAUR*R_ARGSL*R_ARGSS*R_ASAD*R_ASNS2*R_ASP1DC*R_ASPCT*R_ASPK*R_ASPO5*R_ASPTA*R_ATPPRT*R_BPNT*R_CA2tex*R_CAt6pp*R_CBMKr*R_CDPMEK*R_CHORM*R_CHORS*R_CHRPL*R_CLt3_2pp*R_CLtex*R_COBALT2tex*R_COBALT2tpp*R_CPPPGO2*R_CTPS2*R_CU2tex*R_CU2tpp*R_CYSS*R_CYSTL*R_CYTK1*R_DALAt2pp*R_DAPDC*R_DAPE*R_DASYN160*R_DASYN161*R_DB4PS*R_DDPA*R_DHAD1*R_DHAD2*R_DHDPRy*R_DHDPS*R_DHFR*R_DHFS*R_DHNPA2*R_DHORD5*R_DHORTS*R_DHPPDA2*R_DHPS2*R_DHPTDCs*R_DHQS*R_DHQTi*R_DMATT*R_DM_4HBA*R_DM_5DRIB*R_DM_HMFURN*R_DNMPPA*R_DNTPPA*R_DPCOAK*R_DPR*R_DTMPK*R_DXPRIi*R_DXPS*R_E4PD*R_EAR100x*R_EAR120x*R_EAR121x*R_EAR140x*R_EAR141x*R_EAR160x*R_EAR161x*R_EAR40x*R_EAR60x*R_EAR80x*R_EX_ca2_e_*R_EX_cl_e_*R_EX_cobalt2_e_*R_EX_cu2_e_*R_EX_fe2_e_*R_EX_fe3_e_*R_EX_k_e_*R_EX_mg2_e_*R_EX_mn2_e_*R_EX_mobd_e_*R_EX_so4_e_*R_EX_zn2_e_*R_Ec_biomass_iAF1260_core_59p81M*R_FCLT*R_FE2tex*R_FE2tpp*R_FE3abcpp*R_FE3tex*R_FLDR*R_FMNAT*R_FRD2*R_FRD3*R_G1PACT*R_G1SAT*R_G3PAT160*R_G3PAT161*R_G3PD2*R_G5SADs*R_G5SD*R_GARFT*R_GART*R_GCALDD*R_GF6PTA*R_GHMT2r*R_GK1*R_GLU5K*R_GLUPRT*R_GLUR*R_GLUTRR*R_GLUTRS*R_GLYCTO4*R_GMPS2*R_GRTT*R_GRXR*R_GTHOr*R_GTPCI*R_GTPCII2*R_HBZOPT*R_HCO3E*R_HISTD*R_HISTP*R_HMBS*R_HPPK2*R_HSDy*R_HSK*R_HSST*R_HSTPT*R_IG3PS*R_IGPDH*R_IGPS*R_ILETA*R_IMPC*R_IMPD*R_IPDDI*R_IPDPS*R_IPMD*R_IPPMIa*R_IPPMIb*R_IPPS*R_K2L4Aabcpp*R_K2L4Atex*R_KARA1*R_KARA2*R_KAS15*R_KDOCT2*R_KDOPP*R_KDOPS*R_Kt2pp*R_Ktex*R_LEUTAi*R_LPADSS*R_MCOATA*R_MCTP1App*R_MECDPDH2*R_MECDPS*R_MEPCT*R_METAT*R_METS*R_MG2t3_2pp*R_MG2tex*R_MN2tpp*R_MNtex*R_MOAT*R_MOAT2*R_MOBDabcpp*R_MOBDtex*R_MOHMT*R_MPTG*R_MTHFC*R_MTHFD*R_MTHFR2*R_NADK*R_NADS1*R_NDPK1*R_NDPK2*R_NDPK3*R_NDPK4*R_NDPK6*R_NNATr*R_NNDPR*R_OCBT*R_OCTDPS*R_OHPBAT*R_OMCDC*R_OMPDC*R_OPHBDC*R_OPHHX3*R_ORPT*R_P5CR*R_PANTS*R_PAPPT3*R_PAPSR2*R_PDX5PO2*R_PDX5PS*R_PE160abcpp*R_PE161abcpp*R_PERD*R_PGAMT*R_PGCD*R_PHETA1*R_PItex*R_PMDPHT*R_PMPK*R_PNTK*R_PPBNGS*R_PPCDC*R_PPKr*R_PPM*R_PPNCL2*R_PPND*R_PPNDH*R_PPPGO3*R_PRAGSr*R_PRAIS*R_PRAIi*R_PRAMPC*R_PRASCSi*R_PRATPP*R_PRFGS*R_PRMICI*R_PRPPS*R_PSCVT*R_PSD160*R_PSD161*R_PSERT*R_PSP_L*R_PSSA160*R_PSSA161*R_PTPATi*R_PUNP1*R_QULNS*R_RBFK*R_RBFSa*R_RBFSb*R_RHCCE*R_RNTR1c*R_RNTR2c*R_RNTR3c*R_RNTR4c*R_SADT2*R_SDPDS*R_SDPTA*R_SERAT*R_SHCHD2*R_SHCHF*R_SHK3Dr*R_SHKK*R_SHSL1*R_SO4tex*R_SULRi*R_SULabcpp*R_T2DECAI*R_TDSK*R_THDPS*R_THRD_L*R_THRS*R_THRt2rpp*R_THRt4pp*R_THZPSN*R_TMDS*R_TMPK*R_TMPPP*R_TRPS2*R_TRPS3*R_TYRTA*R_U23GAAT*R_UAAGDS*R_UAGAAT*R_UAGCVT*R_UAGDP*R_UAGPT3*R_UAMAGS*R_UAMAS*R_UAPGR*R_UDCPDP*R_UDCPDPS*R_UGMDDS*R_UHGADA*R_UMPK*R_UPP3MT*R_UPP3S*R_UPPDC1*R_URIDK2r*R_USHD*R_VALTA*R_ZN2tpp*R_Zn2tex*lumped" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_3pg_c" stoichiometry="7.7679"/>
+               <speciesReference species="M_accoa_c" stoichiometry="17.44"/>
+               <speciesReference species="M_atp_c" stoichiometry="316.5159"/>
+               <speciesReference species="M_dhap_c" stoichiometry="0.63907"/>
+               <speciesReference species="M_e4p_c" stoichiometry="1.6824"/>
+               <speciesReference species="M_f6p_c" stoichiometry="0.42723"/>
+               <speciesReference species="M_for_c" stoichiometry="0.48825"/>
+               <speciesReference species="M_gln_L_c" stoichiometry="8.1751"/>
+               <speciesReference species="M_glu_L_c" stoichiometry="30.4561"/>
+               <speciesReference species="M_h2o_c" stoichiometry="259.6962"/>
+               <speciesReference species="M_h_p" stoichiometry="0.76253"/>
+               <speciesReference species="M_nad_c" stoichiometry="1.7958"/>
+               <speciesReference species="M_nadph_c" stoichiometry="32.7446"/>
+               <speciesReference species="M_nh4_c" stoichiometry="1.9682"/>
+               <speciesReference species="M_oaa_c" stoichiometry="13.2323"/>
+               <speciesReference species="M_pep_c" stoichiometry="3.6644"/>
+               <speciesReference species="M_pi_e" stoichiometry="4.3479"/>
+               <speciesReference species="M_pyr_c" stoichiometry="12.5922"/>
+               <speciesReference species="M_r5p_c" stoichiometry="4.2174"/>
+               <speciesReference species="M_ru5p_D_c" stoichiometry="0.17997"/>
+               <speciesReference species="M_succoa_c" stoichiometry="2.3741"/>
+               <speciesReference species="M_ca2_b" stoichiometry="0.021425"/>
+               <speciesReference species="M_cl_b" stoichiometry="0.021425"/>
+               <speciesReference species="M_cobalt2_b" stoichiometry="0.014283"/>
+               <speciesReference species="M_cu2_b" stoichiometry="0.014283"/>
+               <speciesReference species="M_fe2_b" stoichiometry="0.034156"/>
+               <speciesReference species="M_fe3_b" stoichiometry="0.032139"/>
+               <speciesReference species="M_k_b" stoichiometry="0.80326"/>
+               <speciesReference species="M_mg2_b" stoichiometry="0.035708"/>
+               <speciesReference species="M_mn2_b" stoichiometry="0.014283"/>
+               <speciesReference species="M_mobd_b" stoichiometry="0.014283"/>
+               <speciesReference species="M_so4_b" stoichiometry="1.1318"/>
+               <speciesReference species="M_zn2_b" stoichiometry="0.014283"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_ac_c" stoichiometry="2.6278"/>
+               <speciesReference species="M_adp_c" stoichiometry="306.2743"/>
+               <speciesReference species="M_akg_c" stoichiometry="33.7677"/>
+               <speciesReference species="M_amp_c" stoichiometry="10.2417"/>
+               <speciesReference species="M_co2_c" stoichiometry="7.8432"/>
+               <speciesReference species="M_coa_c" stoichiometry="19.814"/>
+               <speciesReference species="M_fum_c" stoichiometry="3.1945"/>
+               <speciesReference species="M_g3p_c" stoichiometry="0.24426"/>
+               <speciesReference species="M_glx_c" stoichiometry="0.0030258"/>
+               <speciesReference species="M_h_c" stoichiometry="291.8252"/>
+               <speciesReference species="M_nadh_c" stoichiometry="1.7958"/>
+               <speciesReference species="M_nadp_c" stoichiometry="32.7446"/>
+               <speciesReference species="M_pi_c" stoichiometry="340.7438"/>
+               <speciesReference species="M_pi_p" stoichiometry="4.3479"/>
+               <speciesReference species="M_succ_c" stoichiometry="3.8865"/>
+               <speciesReference species="Bio" stoichiometry="4.5228"/>
+               <speciesReference species="M_4hba_b" stoichiometry="0.0010086"/>
+               <speciesReference species="M_5drib_b" stoichiometry="0.0020172"/>
+               <speciesReference species="M_hmfurn_b" stoichiometry="0.0020172"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_SUCCtex" name="R_SUCCtex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_succ_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_succ_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_PYRtex" name="R_PYRtex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_pyr_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_pyr_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_O2tex" name="R_O2tex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_o2_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_o2_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_NH4tex" name="R_NH4tex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_nh4_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_nh4_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_D_LACtex" name="R_D_LACtex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_lac_D_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_lac_D_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_Htex" name="R_Htex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_h_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_EX_h2_e__R_FHL_R_H2tex_R_H2tpp_lumped" name="R_EX_h2_e_*R_FHL*R_H2tex*R_H2tpp*lumped" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_for_c" stoichiometry="1"/>
+               <speciesReference species="M_h_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_co2_c" stoichiometry="1"/>
+               <speciesReference species="M_h2_b" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_H2Otex" name="R_H2Otex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_h2o_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h2o_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_GLUtex" name="R_GLUtex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_glu_L_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_glu_L_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_GLCtex" name="R_GLCtex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_glc_D_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_glc_D_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_FORtex" name="R_FORtex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_for_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_for_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ETOHtex" name="R_ETOHtex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_etoh_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_etoh_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_CO2tex" name="R_CO2tex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_co2_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_co2_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_AKGtex" name="R_AKGtex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_akg_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_akg_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ACALDtex" name="R_ACALDtex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_acald_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_acald_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_ACtex" name="R_ACtex" reversible="true">
+            <listOfReactants>
+               <speciesReference species="M_ac_e" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_ac_p" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+         <reaction id="R_CYTBO3_4pp" name="R_CYTBO3_4pp" reversible="false">
+            <listOfReactants>
+               <speciesReference species="M_h_c" stoichiometry="4"/>
+               <speciesReference species="M_o2_c" stoichiometry="0.5"/>
+               <speciesReference species="M_q8h2_c" stoichiometry="1"/>
+            </listOfReactants>
+            <listOfProducts>
+               <speciesReference species="M_h2o_c" stoichiometry="1"/>
+               <speciesReference species="M_h_p" stoichiometry="4"/>
+               <speciesReference species="M_q8_c" stoichiometry="1"/>
+            </listOfProducts>
+         </reaction>
+      </listOfReactions>
+   </model>
+</sbml>
