@@ -162,3 +162,10 @@ def different_mediums(model1, model2):
             print 'Model 1: ', key, model1.medium[key]
         elif key in model2.medium:
             print 'Model 2: ', key, model2.medium[key]
+
+def add_reagents_to_model(model, row):
+    mod = model.copy()
+    addl_reagent_nms = ['mg2', 'nh4', 'k', 'glc__D', 'pi', 'nad', 'atp', 'coa']
+    metab_dict = gen_metab_dict(mod, addl_reagent_nms, map(lambda x: -1 * conc_to_flux(x), row[4:]))
+    rxn = add_exchange(mod, metab_dict, additive=True)
+	return mod
