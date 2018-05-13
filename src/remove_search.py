@@ -10,6 +10,7 @@ import scipy.stats
 import matplotlib.pyplot as plt
 import copy
 import utils
+from joblib import Parallel
 
 class FBA_Env(gym.Env):      
     def __init__(self, model, df):
@@ -107,7 +108,7 @@ class FBA_Step_Env(FBA_Env):
     
     def _evaluate(self, state_rxns):
         #objs = utils.add_addl_reactants(self.cur_model, self.df)
-        objs, fluxes = utils.gen_fluxes_addl_reactants(self.cur_model, self.df)
+        objs, fluxes = utils.gen_fluxes_addl_reactants(self.cur_model, self.df, self.parallel)
         if not tuple(objs) in self.unique_fluxes:
             self.unique_fluxes[tuple(objs)] = (fluxes, state_rxns)
         if sum(objs) < 0.01 or np.isnan(objs).any() or not objs:

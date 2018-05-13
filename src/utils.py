@@ -1,6 +1,8 @@
 import cobra
 import cobra.test
 import numpy as np
+from joblib import Parallel, delayed
+from functools import partial
 
 def convert_cmpts(model, metab, from_cmpt='c', to_cmpt='e'):
     if type(metab) is cobra.Metabolite:
@@ -123,22 +125,18 @@ def add_addl_reactants(model, df):
 	    #print 'Obj: {0}'.format(obj.objective_value)
     return objs
 
-def gen_fluxes_addl_reactants(model, df):
+def gen_fluxes_addl_reactants(model, df, parallel):
     #mod = model.copy()
-    addl_reagent_nms = ['mg2', 'nh4', 'k', 'glc__D', 'pi', 'nad', 'atp', 'coa']
-    objs, fluxes = [], []
-    for i, row in df.iterrows():
-	with model as mod:
-	    metab_dict = gen_metab_dict(mod, addl_reagent_nms, map(lambda x: -1 * conc_to_flux(x), row[4:]))
-	    rxn = add_exchange(mod, metab_dict, additive=True)
-	    #mod.add_reactions(reaction_list=sol[0])
-	    sol = mod.optimize()
-            if sol.status == 'infeasible' or np.isnan(sol.objective_value):
-                objs.append(0)
-            else:
-                objs.append(sol.objective_value)
-            fluxes.append(sol.fluxes)
-    return objs, fluxes
+    #objs, fluxes = [], []
+    #for i, row in df.iterrows():
+    #res = parallel(delayed(get_fluxes)(model, row) for i, row in df.iterrows())
+    if parallel:
+        res = parallel.map(partial(get_fluxes, model), [i[1] for i in df.iterrows()])
+    else:
+        res = []
+        for i, row in df.iterrows():
+            res.append(get_fluxes(model, row))
+    return [i[0] for i in res], [i[1] for i in res]
 
 def gen_fluxes(model):
     obj = 0
@@ -147,6 +145,20 @@ def gen_fluxes(model):
         obj = sol.objective_value
         fluxes = sol.fluxes
     return obj, fluxes
+
+def get_fluxes(model, row):
+    addl_reagent_nms = ['mg2', 'nh4', 'k', 'glc__D', 'pi', 'nad', 'atp', 'coa']
+    with model as mod:
+        metab_dict = gen_metab_dict(mod, addl_reagent_nms, map(lambda x: -1 * conc_to_flux(x), row[4:]))
+        rxn = add_exchange(mod, metab_dict, additive=True)
+        #mod.add_reactions(reaction_list=sol[0])
+        sol = mod.optimize()
+        if sol.status == 'infeasible' or np.isnan(sol.objective_value):
+            obj =append(0)
+        else:
+            obj = sol.objective_value
+        flux = sol.fluxes
+    return obj, flux
 
 def change_obj(model, metab):
     if (not 'DM_{0}'.format(metab.id) in model.reactions):
