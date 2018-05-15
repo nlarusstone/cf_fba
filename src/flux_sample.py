@@ -10,7 +10,8 @@ if __name__ == '__main__':
     df = pd.read_csv('../data/Karim_MetEng_2018_Figure2_Data.csv')
     df.drop(columns=['Area_1', 'Area_2', 'Conc_1', 'Conc_2'], inplace=True)
 
-	for i, row in df.iterrows():
-		model_i = utils.add_reagents_to_model(model, row)
-		samples_i = sample(model_i, 10, processes=multiprocessing.cpu_count() - 1)
-		samples_i.to_csv('../data/fluxes_{0}'.format(i))
+    for i, row in df.iterrows():
+	print i
+	model_i = utils.add_reagents_to_model(model, row)
+	samples_i = sample(model_i, 2000, processes=multiprocessing.cpu_count() - 1)
+	samples_i.to_csv('../data/fluxes_{0}'.format(i))
