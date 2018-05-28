@@ -99,16 +99,18 @@ def julia_to_cobra_json(folder, fout=None):
     for julia_rxn in julia_model["list_of_reactions"]:
         cobra_rxn = convert_rxn(julia_rxn, rxn_dict)
         cobra_rxns.append(cobra_rxn)
+    # NOTE: we put everything in cytoplasm right now
+    cmpts = set(['cytoplasm'])
     cobra_model['metabolites'] = cobra_metabs
     cobra_model['reactions'] = cobra_rxns
     cobra_model['genes'] = []
     cobra_cmpts = {}
     for cmpt in cmpts:
         cobra_cmpts[cmpt[0]] = cmpt.capitalize()
-    cobra_model['compartments']  = cobra_cmpts
+    cobra_model['compartments'] = cobra_cmpts
     if fout:
         with open(fout, 'w') as outfile:
             json.dump(cobra_model, outfile)
     return cobra_model
 
-julia_to_cobra_json('../3rd_Party_Code/Sequence-Specific-FBA-CFPS-Publication-Code/Staging/', '../models/varner.json')
+julia_to_cobra_json('../3rd_Party_Code/Sequence-Specific-FBA-CFPS-Publication-Code/Staging/', '../models/varner_rfp.json')

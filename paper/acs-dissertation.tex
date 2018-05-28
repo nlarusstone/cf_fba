@@ -1,0 +1,63 @@
+%% 
+%% ACS project dissertation 
+%% 
+%% Currently designed for printing two-sided, but if you prefer to 
+%% print single-sided just remove ",twoside,openright" from the 
+%% \documentclass[] line below. 
+
+\documentclass[a4paper,12pt,twoside,openright]{report}
+
+%TODO: Title and word count
+\def\authorname{Nicholas L.\ Larus-Stone\xspace}
+\def\authorcollege{Queens' College\xspace}
+\def\authoremail{nl363@cl.cam.ac.uk}
+\def\dissertationtitle{Title}
+\def\wordcount{0}
+
+
+\usepackage{epsfig,graphicx,parskip,setspace,tabularx,xspace} 
+\usepackage{gensymb}
+
+\begin{document}
+
+%% FRONTMATTER (TITLE PAGE, DECLARATION, ABSTRACT, ETC) 
+\pagestyle{empty}
+\singlespacing
+\input{titlepage}
+\onehalfspacing
+\input{declaration}
+\singlespacing
+\input{abstract}
+
+\pagenumbering{roman}
+\setcounter{page}{0}
+\pagestyle{plain}
+\tableofcontents
+\listoffigures
+\listoftables
+
+\onehalfspacing
+
+%% START OF MAIN TEXT 
+
+\include{introduction}
+
+\include{background}
+
+\include{related_work}
+
+\include{implementation}
+
+\include{results}
+
+\include{discussion}
+
+
+\appendix
+\include{appendix}
+\singlespacing
+
+\bibliographystyle{unsrt} 
+\bibliography{refs} 
+
+\end{document}

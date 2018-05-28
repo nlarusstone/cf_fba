@@ -1,0 +1,45 @@
+\chapter{Related Work} 
+This chapter introduces related work in the relevant fields of computer science and biological modeling.
+The key insight is that very few techniques have focused on modeling cell-free systems and no one has yet applied deep learning techniques to metabolic models.
+
+\section{FBA and GEMs}
+The earliest work on metabolic modeling comes from the 1980s with the use of stoichiometric equations to predict the yield of specific fermentation products \cite{papoutsakis1984equations}.
+This work was soon expanded to other systems and the use of linear programming (LP) to solve for the optimal result was proposed \cite{fell1986fat}.
+Constraint based analysis was soon applied to the description of the metabolic system in E. coli \cite{majewski1990simple}.
+Improvements on this initial model have been stepwise in the years following.
+For instance, a large step involved the addition of catabolic pathways to the model \cite{varma1993metabolic}.
+
+With the growth in genome sequencing, however, came the ability to describe metabolic systems on the basis of their underlying genome.
+FBA using Ajo260
+IJO1366 as GEM i use
+
+Extensions of FBA
+Elemental modes
+ME-FBA
+
+\section{Applying ML to FBA}
+One problem with using the GEMs that other people have realized is that they can be overspecified.
+Since they contain every known reaction that is going on
+Reduction to core models
+	LumpGem
+	redGEM
+	NetworkReducer
+	MinNW
+
+PCA + FBA
+Bayesian FBA
+Network models on FBA
+
+\section{Modeling Cell-Free systems}\label{rw:mod-cf}
+Modeling cell-free systems has typically taken the form of building kinetic models of transcription and translation.
+This involves the authors choosing which reactions they believe are most important and then writing out those reactions.
+In 2013, the Murray lab at CalTech applied this to a commercial cell-free system and was able to accurately describe the dynamics of their gene circuit of interest \cite{tuza2013silico}.
+This was followed up by further work that expanded the \cite{wayman2015dynamic}
+More recent work on this Recent work includes Bayesian parameter inference \cite{moore2018rapid}
+
+2012 cell free model remove by hand \cite{bujara2012silico}
+Varner ssFBA build from scratch. sequence specific. \cite{vilkhovoy2017sequence}
+
+\section{VAEs}
+We use a VAE in conjunction with FBA to model a cell-free system.
+Kingma 2013 and Welling 2014 first introduce the idea

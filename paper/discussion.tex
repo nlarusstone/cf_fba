@@ -1,0 +1,55 @@
+\chapter{Discussion and Future Work} 
+
+\section{Improved data gathering}
+As we've shown, increasing the amount of data is useful for training a more generalizable model.
+Generating lots of biological data is difficult, but there is a movement towards greater automation of lab tasks.
+In particular, we showed that a lab robot such as the Labcyte Echo can be used to generate larger scale datasets.
+We encourage future work to take this even further and generate datasets with hundreds or even thousands of starting conditions.
+
+\section{Different cell types}
+We have only explored the usage of this technique on a E. coli cell-free model.
+However, there is a lot of work currently ongoing to use non-E. coli cell-free models.
+This system was written with generalizability in mind and should transfer to other organisms as well.
+In particular, this was the intent with creating a reduction system instead of hand-building a model from scratch.
+There are dozens of FBA models of other organisms that this could be applied to.
+
+In particular, the primary author of this work is a part of an Open Plant grant which involves the exploration of using wheat-germ cell-free systems.
+The data is currently being generated through a collaboration with the Earlham Institute.
+After the data generation is done, we want to apply this to that data to see its effectiveness.
+Additionally, this system will get a web interface to encourage other biologists to use it for their own data.
+
+\section{RL system for reduction}
+One thing that we noticed while thinking about the best way to reduce the model is that we could frame the problem in terms of a reinforcement learning problem.
+We originally tried to determine which reactions to remove by hand.
+However, the way we went about this was removing a reaction and re-running the model to see the output.
+Then, we compared how well we match the experimental data.
+So, we built a reinforcement learning framework to do this.
+Rewards are based on how well our collection of models reflects the experimental data.
+
+Simply doing a naive search with this RL framework would take far too long.
+Starting with 2600 reactions, performing a random search over this space could take up to TODO.
+Thus, we could use the VAE that we wrote in conjunction with this framework to perform a better directed search.
+This could allow us to reduce the model even further and get even more specificity in the reduction.
+
+\section{Improved starting model}
+One potential issue that is limiting the usefulness of our pipeline is how well described the initial models are.
+They're only as good as they are allowed to be by the reactions that exist.
+FBA models undergo improvements periodically and we're using the most prominent model iJO1366.
+However, as this model is updated, our model can adapt and use more up-to-date reactions.
+
+\section{Improved VAE}
+
+
+\section{Batch variation}
+Batch variation is an important problem facing the cell-free community.
+Some studies have shown up to 20\% variation between batches for the same protocols and DNA constructs.
+This is an incredibly important issue because the typical workflow for a researcher may involve the characterization of a circuit through a series of different conditions or slightly different DNA programs.
+However, most people need to compare the performance of these variations.
+In order to deal with variation, researchers will perform all of their experiments with a single batch.
+When that batch runs out, though, they will be required to re-characterize and redo all of the experiments they have already done.
+
+We offer two potential solutions with our system.
+First, a researcher could run a calibration set of experiments and then use that to generate a VAE model based on that data.
+Then, any future experiments that are performed (either in the same batch or a different one) could be projected into the same latent space in order to allow comparison between the experiments.
+A second solution would involve running a calibration for each batch and then determine the relative vector differences.
+This would allow the translation of all of the data for each batch

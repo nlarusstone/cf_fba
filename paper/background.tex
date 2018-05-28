@@ -1,0 +1,61 @@
+\chapter{Background}
+
+\section{Cell-Free systems}
+Cell-Free systems are simplified version of cells.
+The Central Dogma of biology is that "DNA makes RNA makes protein" \cite{}.
+Cell-Free systems take that to an extreme by removing all endogenous DNA and RNA and membranes while retaining the proteins crucial for transcription and translation.
+This means that when a DNA program is added to a cell-free system, the only protein that is being expressed is whatever is coded for in the custom protein.
+
+There are multiple types of cell-free systems.
+For many years, scientists have been using PURE cell-free systems \cite{}.
+These systems are composed of individual purified proteins involved in transcription and translation.
+The cost of these systems is relatively high due to the time and effort required to isolate and purify each of these different proteins.
+The benefit of these systems is that yield is high and the system is completely known--the only things in the system have been individually aded.
+
+However, there has been a resurgence in using crude cell-free systems.
+This involves using cell extract (blended up cells) and assuming that the important transcription/translation machinery will be in the cell extract.
+The downside to this is that the exact composition of these cell extracts varies each time it is made and is generally unknown.
+Therefore, a system that can accurately model these crude CFPS would be extremely useful.
+
+\section{FBA}
+FBA is a stoichiometric method that involves solving for the fluxes at steady state.
+S * v = 0
+S is the stoichiometric matrix, v is the flux vector, and we assume steady state.
+While CFPS don't have steady state, we can consider this to be the period of maximal production when there are no limiting reagents.
+This will determine the longevity of the reaction and the total amount of protein produced
+
+Set up constraints to reflect the limits of the system
+Forces system to fit within a hyperspace and not set everything to infinity.
+Using these constraints and the stoichiometric formulation, we can describe this as a linear programming problem.
+
+As a linear programming problem, we also need to set a custom objective to optimize for.
+Usually this is the biomass objective, which encapsulates everything necessary for bacterial growth.
+However, since we don't care about growth, just production, we can use our own objectives.
+For us, the typical objective will be the production of some protein since that's the purpose of the CFPS.
+
+\section{VAEs}
+Autoencoders are a dimensionality reduction technique with a very simple idea: given a dataset, try to reconstruct that dataset.
+In the process of reconstructing the dataset, they force it through a lower dimensionality than the original dataset.
+This causes some data loss, but it also gives a compressed representation that can be lossily reconstructed.
+However, that lower dimensional "latent space" can also uncover interesting relationships within the original data that may not be obvious to a person.
+This is very similar to the idea behind Principal Component Analysis (PCA), though PCA acts in a linear manner, while autoencoders are able to learn non-linear functions.
+
+The idea behind deep autoencoders is to build an autoencoder using neural network layers to learn the encoding and decoding functions.
+There are a number of different types of autoencoders that have been proposed.
+One of the most basic is a sparse autoencoder.
+In order to force the autoencoder to learn the most interesting dimensionality reduction possible, one can add a loss term based on the sparsity of the layers.
+This forces the autoencoder to learn the sparsest representation possible.
+Another type of autoencoder is a denoising autoencoder.
+This type of autoencoder involves taking the original representation and corrupting it and then trying to learn the original representation from the corrupted data.
+
+The type of autoencoder that we will focus on in this dissertation is a variational autoencoder.
+Variational autoencoders are a relatively recent idea which takes a probabilistic view of the classical autoencoder idea.
+Instead of just representing the latent space with a number of reduced dimensions, we can use a probability distribution over the latent space.
+Specifically, we learn the mean and the standard deviation of the latent space.
+
+Now, our loss is composed of two terms.
+First, we still care about how well we are able to reconstruct our original data.
+So, we can have a reconstruction loss term.
+However, we also want to learn a reasonable latent space.
+Thus, we can use a measure of distance from the normal distribution.
+To do this, we use KL divergence, a common way of measuring difference between probability distributions.
