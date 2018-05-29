@@ -181,3 +181,6 @@ def add_reagents_to_model(model, row):
     metab_dict = gen_metab_dict(mod, addl_reagent_nms, map(lambda x: -1 * conc_to_flux(x), row[4:]))
     rxn = add_exchange(mod, metab_dict, additive=True)
     return mod
+
+def get_aa_metab(model, aa, cmpt='c'):
+    return model.metabolites.query('{0}__._{1}'.format(aa, cmpt))
