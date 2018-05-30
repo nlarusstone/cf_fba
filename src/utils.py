@@ -1,7 +1,6 @@
 import cobra
 import cobra.test
 import numpy as np
-from joblib import Parallel, delayed
 from functools import partial
 
 def convert_cmpts(model, metab, from_cmpt='c', to_cmpt='e'):
