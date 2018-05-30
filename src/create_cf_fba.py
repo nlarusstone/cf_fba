@@ -1,5 +1,8 @@
+import Bio.PDB.Polypeptide as pdb
 import cobra
 import re
+import utils
+import cf_io
 
 def get_aa_metab(model, aa, cmpt='c'):
     return model.metabolites.query('{0}__._{1}'.format(aa, cmpt))
@@ -14,7 +17,7 @@ def replace_metab(mod, metab):
         cyt.compartment = 'c'
     return cyt
 
-def coalesce_cmpts(model)
+def coalesce_cmpts(model):
     mod = model.copy()
     for rxn in mod.reactions:
         if 'p' in rxn.compartments or 'e' in rxn.compartments:
@@ -24,11 +27,12 @@ def coalesce_cmpts(model)
                 rxn.add_metabolites({metab: -1 * amt})
                 rxn.add_metabolites({cyt: amt})
             rxn.comparments = set('c')
-            rx
             #mod.add_reaction(reaction=rxn)
     for m in mod.metabolites.query(r'.*_e$'):
+        assert(len(m.reactions) == 0)
         m.remove_from_model(destructive=True)
     for m in mod.metabolites.query(r'.*_p$'):
+        assert(len(m.reactions) == 0)
         m.remove_from_model(destructive=True)
     return mod
 
@@ -36,11 +40,6 @@ def strip_exchanges(mod, reactants):
     # Delete transmembrane transport reactions
     model = mod.copy()
 
-    # Add exchange reactions for all metabolites
-    # Exchange‐reactions for non‐substrate metabolites have lb of 0 and ub of 1000 by default
-    #all_metab_ex = utils.gen_metab_dict(model, model.metabolites, cnvt=False)
-
-    #utils.add_ex(model, all_metab_ex)
     exs = set()
     for metab in reactants:
         if metab == 'trna':
@@ -81,6 +80,7 @@ def build_medium(model, cfps_conc):
 if __name__ == '__main__':
     model = cobra.io.read_sbml_model(filename='../models/iJO1366.xml')
     model_cyt = coalesce_cmpts(model)
+    cfps_conc = cf_io.get_conc()
     model_bare = strip_exchanges(model_cyt, cfps_conc.index[:-1])
     model_cf = build_medium(model_bare, cfps_conc)
-    cobra.io.write_sbml_model(filename='../models/ecoli_cf_base.sbml', cobra_model=model_cf)
+    cobra.io.write_sbml_model(filename='../models/ecoli_simp_cf_base.sbml', cobra_model=model_cf)
