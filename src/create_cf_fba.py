@@ -3,6 +3,15 @@ import cobra
 import re
 import utils
 import cf_io
+import argparse
+import difflib
+from constants import varner_to_ijo
+
+parser = argparse.ArgumentParser(description='Create cell free model')
+parser.add_argument('-c', '--conc-final', metavar='c', type=str, help='Path for final concentration file')
+parser.add_argument('-t', '--txtl', dest='txtl', help='Correlation loss', default=False, action='store_true')
+parser.add_argument('--no-txtl', dest='txtl', help='Correlation loss', action='store_false')
+parser.add_argument('-d', '--dataset', type=str, default='nls')
 
 def get_aa_metab(model, aa, cmpt='c'):
     return model.metabolites.query('{0}__._{1}'.format(aa, cmpt))
@@ -77,10 +86,82 @@ def build_medium(model, cfps_conc):
             #mod.add_boundary(metabolite=m, type='cfps-medium', reaction_id=rxn_nm, lb=0, ub=flux) 
     return mod
 
+def extract_txtl_rxns(model):
+    aa_metabs = []
+    for aa in pdb.aa3:
+        aa_metabs += model.metabolites.query(aa.lower())
+    aa_rxns = []
+    for aa_metab in aa_metabs:
+        aa_rxns += aa_metab.reactions
+    mrna_rxns = model.reactions.query(re.compile('mrna', re.IGNORECASE))
+    trna_rxns = model.reactions.query('tRNA_c')
+    tx_rxns = model.reactions.query('transcription')
+    tl_rxns = model.reactions.query('translation')
+    prot_rxns = model.reactions.query('PROTEIN')
+    #txtl_rxns = list(set(aa_rxns).union(tx_rxns).union(tl_rxns).union(prot_rxns).union(mrna_rxns))
+    txtl_rxns = list(set(tx_rxns).union(tl_rxns).union(prot_rxns).union(mrna_rxns).union(trna_rxns))
+    return txtl_rxns
+
+def varner_to_cobra(model, metab, metab_ids, varner_to_ijo):
+    if metab.id.startswith('M_'):
+        metab_stem = metab.id.split('M_')[1].rsplit('_c', 1)[0]
+        #print metab_stem
+        if 'tRNA' in metab_stem:
+            aa = metab_stem.split('_', 1)[0]
+            metab_name = aa + 'trna'
+        elif not metab_stem in metab_ids:
+            #query = varner_to_ijo[metab_stem]
+            #print metab_stem
+            if metab_stem in varner_to_ijo:
+                #print 'matched'
+                metab_name = varner_to_ijo[metab_stem]
+            elif '_L' in metab_stem or '_D' in metab_stem:
+                #print difflib.get_close_matches(metab_stem, metab_ids, 1, 0.7)
+                metab_name = difflib.get_close_matches(metab_stem, metab_ids, 1, 0.7)[0]
+            else:
+                print 'TODO: ', metab_stem
+                raise Exception
+        else:
+            metab_name = metab_stem
+    else:
+        try:
+            model.metabolites.get_by_id(metab_name)
+        except:
+            model.metabolites.add(metab)
+    return model.metabolites.get_by_id(metab_name + '_c')
+
+def add_txtl(model, txtl_rxns):
+    mod = model.copy()
+    metab_ids = [m.id.rsplit('_c', 1)[0] for m in mod.metabolites if m.compartment == 'c']
+    for rxn in txtl_rxns:
+        #print rxn
+        for metab, amt in rxn.metabolites.items():
+            if not metab.id.startswith('M_'):
+                #print 'EXCEPT:', metab
+                continue
+            new_metab = varner_to_cobra(mod, metab, metab_ids, varner_to_ijo)
+            rxn.add_metabolites({metab: -1 * amt})
+            rxn.add_metabolites({new_metab: amt})
+        mod.add_reaction(rxn)
+    return mod
+
 if __name__ == '__main__':
+    args = parser.parse_args()
+    print args
+    print 'Generate final concentrations'
+    cfps_conc = cf_io.get_conc(cfps_final=args.conc_final)
+    print 'Read in GEM'
     model = cobra.io.read_sbml_model(filename='../models/iJO1366.xml')
+    if args.txtl:
+        print 'Adding TXTL reactions'
+        varner = cobra.io.load_json_model('../models/varner.json')
+        txtl_rxns = extract_txtl_rxns(varner)
+        model = add_txtl(model, txtl_rxns)
+    print 'Moving all reactions to same compartment'
     model_cyt = coalesce_cmpts(model)
-    cfps_conc = cf_io.get_conc()
+    print 'Rebuilding medium'
     model_bare = strip_exchanges(model_cyt, cfps_conc.index[:-1])
     model_cf = build_medium(model_bare, cfps_conc)
-    cobra.io.write_sbml_model(filename='../models/ecoli_simp_cf_base.sbml', cobra_model=model_cf)
+    print 'Writing out'
+    cobra.io.write_sbml_model(filename='../models/{0}_ecoli_cf_base{1}.sbml'.format(args.dataset, '_txtl' if args.txtl else ''), cobra_model=model_cf)
+    cfps_conc.to_csv(path_or_buf='../data/{0}_concs'.format(args.dataset))

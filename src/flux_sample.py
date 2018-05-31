@@ -6,6 +6,12 @@ import cobra
 import utils
 import Bio.PDB.Polypeptide as pdb
 import Bio.SeqUtils as su
+import argparse
+
+parser = argparse.ArgumentParser(description='Sample fluxes from different CF models')
+parser.add_argument('-s', '--samps', metavar='s', type=int, help='Number of samples', default=200)
+parser.add_argument('-d', '--dataset', type=str, default='nls')
+
 
 def get_aa_metab(model, aa, cmpt='c'):
     return model.metabolites.query('{0}__._{1}'.format(aa, cmpt))
@@ -30,28 +36,8 @@ def change_conc(model, cfps_conc):
             #mod.add_boundary(metabolite=m, type='cfps-medium', reaction_id=rxn_nm, lb=0, ub=flux) 
     return mod
 
-# amt in g, vol in mL, mw in g/mol
-def calc_conc(amt, vol, mw=None, seq=None, seq_type=None):
-    # seq can be DNA or protein or an amino acid
-    if seq:
-        mw = su.molecular_weight(seq, seq_type)
-    elif not mw:
-        raise Exception('Need a molecular weight for non-DNA')
-    conc = (amt * 1000) / (vol * mw)
-    # returns Molar concentrations
-    return conc
-
 def conc_dilution(start_conc, vol_add, tot_vol):
     return start_conc * (vol_add / tot_vol)
-
-def read_start_conds():
-    aa_mix = pd.read_csv('../data/aa_mix.csv', index_col='AA')
-    nrg_mix = pd.read_csv('../data/energy_mix.csv', index_col='compound')
-    with open('../genes/rfp.txt', 'r') as f:
-        seq = f.read()
-    cfps_conc = pd.read_csv('../data/cfps_start.csv', index_col='compound')
-    dna_conc = calc_conc(0.000750, 0.00496, seq=seq, seq_type='DNA')
-    return aa_mix, nrg_mix, cfps_conc, dna_conc
 
 def get_exp_data():
     df = pd.read_csv('../data/17_5_18_T7_mRFP_NLS.CSV', skiprows=6)
@@ -75,29 +61,22 @@ def get_exp_data():
     return conds_norm
 
 if __name__ == '__main__':
-    flux_sz = 10
-    models = ['ecoli_cf_base.sbml', 'ecoli_cf_txtl_rfp_base.sbml', 'ecoli_cf_txtl_comb_base.sbml']
+    args = parser.parse_args()
+    flux_sz = args.samps
+    rxn_amt = 5
+    addl_amt = 1
+    batch_size = 50
+    n_batches = batch_size / rxn_amt
+    models = ['{0}_ecoli_cf_base{1}.sbml'.format(args.dataset, txtl) for txtl in ['_txtl', '']]
 
-    df = get_exp_data() #pd.read_csv('../data/Karim_MetEng_2018_Figure2_Data.csv')
     print 'Read in data'
+    df = get_exp_data() #pd.read_csv('../data/Karim_MetEng_2018_Figure2_Data.csv')
     #df.drop(columns=['Area_1', 'Area_2', 'Conc_1', 'Conc_2'], inplace=True)
 
-    aa_mix, nrg_mix, cfps_conc, dna_conc = read_start_conds()
-    rxn_amt = 5
-    batch_size = 50 / rxn_amt
-    cfps_conc['amt'] = cfps_conc['amt'] / batch_size
-    aa_mix['start_conc'] = aa_mix.apply(lambda row: calc_conc(row['weight_add'], 1, 
-                                                              seq=pdb.three_to_one(row.name.upper()), seq_type='protein'), axis=1)
-    aa_mix['conc_add'] = conc_dilution(aa_mix['start_conc'], aa_mix['vol_add'], aa_mix['vol_add'].sum())
-    pi_conc = calc_conc(0.15, 5, mw=611.77)
-    nrg_mix['start_conc'] = nrg_mix.apply(lambda row: calc_conc(row['amt'], row['fill'], mw=row['mw']), axis=1)
-    nrg_mix['conc_add'] = conc_dilution(nrg_mix['start_conc'], nrg_mix['vol_add'], nrg_mix['vol_add'].sum())
-
-    for cmpnd, vals in nrg_mix.iterrows():
-        cfps_conc.loc[cmpnd] = [vals['conc_add'], (5.0 / batch_size)]
-    for aa, vals in aa_mix.iterrows():
-        cfps_conc.loc[aa] = [vals['conc_add'], (10.0 / batch_size)]
-    cfps_conc.loc['GENE'] = [dna_conc, (4.96 / batch_size)]
+    cfps_conc = pd.read_csv('../data/{0}_concs'.format(args.dataset), index_col='compound')
+    cfps_conc.drop('final_conc', inplace=True, axis=1)
+    print cfps_conc
+    nrg_mix = pd.read_csv('../data/energy_mix.csv', index_col='compound')
 
     print 'Time to generate model specific conditions'
     for model_f in models:
@@ -111,8 +90,8 @@ if __name__ == '__main__':
             for nt in ['atp', 'gtp', 'ctp', 'utp']:
                 cfps_conc_tmp.loc[nt]['amt'] += row['nts'] / 4
             for cmpnd, vals in nrg_mix.iterrows():
-                cfps_conc_tmp.loc[cmpnd] = [vals['conc_add'], (5.0 + row['mdx'] / batch_size)]
-            rxn_amt += 1
+                cfps_conc_tmp.loc[cmpnd] = [cfps_conc.loc[cmpnd]['start_conc'], (5.0 + row['mdx'] / n_batches)]
+            rxn_amt += addl_amt
             exp_concs = conc_dilution(cfps_conc_tmp['start_conc'], cfps_conc_tmp['amt'], rxn_amt)
             model_i = change_conc(model, exp_concs)
             print model_i.medium
