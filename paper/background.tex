@@ -1,61 +1,108 @@
-\chapter{Background}
+\chapter{Background}\label{chap:bkg}
 
-\section{Cell-Free systems}
-Cell-Free systems are simplified version of cells.
-CFPS have existed since the early 1960's as a way to express proteins that are otherwise difficult to express in a living cell \cite{nirenberg1961dependence}.
-Recent work involving the removal of certain genes have stabilized amino acid synthesis and improved the yield of these protein expression systems \cite{calhoun2006total}.
-This has led to a resurgence in the field of using CFPS in both academic and commercial contexts.
+\section{Cell-free systems}
+CFPS systems have existed since the early 1960's as a way to express proteins that are otherwise difficult to express in a living cell~\cite{nirenberg1961dependence}.
+These CFPS systems were quite crude and had low protein yields, reducing their utility.
+More recently, work involving the removal of certain genes allowed for stabilized amino acid synthesis leading to improved yield of CFPS systems~\cite{calhoun2006total}.
+Another crucial development was the ability to ensure cofactor regeneration pathways were maintained in the CFPS system~\cite{jewett2008integrated}.
+These recent improvements in CFPS systems have led to a multitude of applications for cell-free technologies~\cite{}.
 
-There are multiple types of cell-free systems.
-For many years, scientists have been using PURE cell-free systems \cite{}.
-These systems are composed of individual purified proteins involved in transcription and translation.
-The cost of these systems is relatively high due to the time and effort required to isolate and purify each of these different proteins.
-The benefit of these systems is that yield is high and the system is completely known--the only things in the system have been individually aded.
+When discussing CFPS systems, it is important to distinguish between the multiple types of cell-free systems.
+One type of cell-free system is created by combining individual purified proteins involved in transcription and translation.
+The most widely utilized of these reconstituted cell-free systems is the PURE system~\cite{shimizu2001cell}.
+The benefit of these systems is that the system is completely known and controlled.
+Since the only things in the system are the proteins that have been deliberately aded, users of the systems can be assured that there are no undesirable elements such as nucleases or proteases present.
+However, these systems have relatively high costs due to the time and effort required to isolate and purify each of the requisite proteins.
 
-However, there has been a resurgence in using crude cell-free systems.
-This involves using cell extract (blended up cells) and assuming that the important transcription/translation machinery will be in the cell extract.
-The downside to this is that the exact composition of these cell extracts varies each time it is made and is generally unknown.
-Therefore, a system that can accurately model these crude CFPS would be extremely useful.
+The other type of CFPS system is an extract-based system created using a crude cell extract.
+This is the type of CFPS system we will be using throughout this dissertation.
+Creating an extract-based CFPS system involves growing up cells and then blending them up into extract.
+This extract is then used as the basis of the CFPS system with the assumption that all the important transcription/translation machinery will be in the cell extract.
+Growing up large quantities of cells is relatively cheap, so these types of systems have the potential to scale more effectively than reconstituted cell-free systems. 
+The downside to this way of creating CFPS systems is that the exact composition of these cell extracts is unknown and could potentially vary between batches of CFPS systems.
+This motivates our work to provide a system that can accurately model these crude CFPS systems.
 
 \section{FBA}
-FBA is a stoichiometric method that involves solving for the fluxes at steady state.
+Flux Balance Analysis (FBA) is one of the most common metabolic modeling tools.
+FBA relies on a mathematical representation of all of the metabolic reactions occurring in an organism.
+These reactions can be represented using a matrix S, where each row represents a separate reaction and each column is a metabolite.
+Entries in this matrix consist of the stoichiometric coefficient for each metabolite in the reaction, where metabolites that are consumed are represented using negative numbers.
+Flux through each of these reactions can be represented by a vector v, which is a 1-dimension vector with a length equal to the number of the reactions.
+FBA then makes the assumption that the system is at steady state, so the overall flux through all of the reactions is not changing.
+We can represent this by writing the following:
+\begin{equation}
 S * v = 0
-S is the stoichiometric matrix, v is the flux vector, and we assume steady state.
-While CFPS don't have steady state, we can consider this to be the period of maximal production when there are no limiting reagents.
-This will determine the longevity of the reaction and the total amount of protein produced
+\end{equation}
+where S is the known stoichiometric matrix and v is the unknown flux vector.
 
-Set up constraints to reflect the limits of the system
-Forces system to fit within a hyperspace and not set everything to infinity.
-Using these constraints and the stoichiometric formulation, we can describe this as a linear programming problem.
+This system is underspecified--we typically have more reactions than metabolites--and therefore there is no unique solution to this equation.
+We deal with this issue by specifying reaction constraints and choosing an objective function.
+We can specify constraints on different reactions in order to limit the amount of flux proceeding through a given reaction.
+For instance, if we want to represent a certain reaction as irreversible, we could set the lower bound on that reaction to be 0, specifying that it can only proceed in one direction.
+When choosing an objective function, we can either choose a specific reaction to optimize the flux through or create an artificial reaction that contains metabolites we care about and optimize for that.
+A common choice to optimize for is the Biomass Objective Function, which incorporates many essential metabolites necessary for cell growth~\cite{feist2010biomass}.
+Our choice of objective functions will be discussed further in Section \ref{sec:incorp}
 
-As a linear programming problem, we also need to set a custom objective to optimize for.
-Usually this is the biomass objective, which encapsulates everything necessary for bacterial growth.
-However, since we don't care about growth, just production, we can use our own objectives.
-For us, the typical objective will be the production of some protein since that's the purpose of the CFPS.
+With the constraints and objective function in mind, we can reformulate our problem to be linear programming problem of the form:
+\begin{equation}
+max Z = cv
+s.t. S * v = 0
+and -1000 < v_0 < 1000
+and 0 < v_1 < 1000
+...
+\end{equation}
+We can then use a linear programming solver to find a feasible solution to this problem.
+It may be useful to imagine the potential space of all FBA solutions that can satisfy the constraints as a hypercube.
+Then, the linear programming solver finds an optimum at one corner of the hypercube based on the objective function.
+
+The use of FBA involves this key steady state assumption--i.e. the system is stable.
+CFPS systems don't have the same type of steady state as a typical cell where intake and output are equal.
+However, we can consider the steady state of a CFPS system to be the period of maximal production.
+Thus, we can use FBA to analyze this pseudo-steady state and optimize that time of production, which will lead to greater protein production overall.
+
+A typical FBA model includes thousands of reactions--this is extremely high dimensional data.
+In order to extract insights from the data, we need to use dimensionality reduction techniques.
 
 \section{VAEs}
-Autoencoders are a dimensionality reduction technique with a very simple idea: given a dataset, try to reconstruct that dataset.
-In the process of reconstructing the dataset, they force it through a lower dimensionality than the original dataset.
-This causes some data loss, but it also gives a compressed representation that can be lossily reconstructed.
-However, that lower dimensional "latent space" can also uncover interesting relationships within the original data that may not be obvious to a person.
-This is very similar to the idea behind Principal Component Analysis (PCA), though PCA acts in a linear manner, while autoencoders are able to learn non-linear functions.
+Autoencoders are a dimensionality reduction technique with a very simple idea: given a dataset, try to reconstruct that dataset by passing it through a lower dimensional subspace.
+The original idea behind autoencoders was that this lower dimensional representation of the data functioned as a compressed version of the data.
+Instead of hand designing compression/decompression algorithms, these functions can be learned to be application specific.
+These autoencoders are often worse than hand-designed compression algorithms and have a lot of difficulty competing with classic algorithms on problems such as image compression~\cite{theis2017lossy}.
+However, the lower dimensional compressed representation can be used as a dimensionality reduction technique to uncover non-obvious relationships within the original data.
+This is similar to the idea behind Principal Component Analysis (PCA), though PCA projects the data into a subspace in a linear manner, while autoencoders are able to learn non-linear transformation.
 
-The idea behind deep autoencoders is to build an autoencoder using neural network layers to learn the encoding and decoding functions.
-There are a number of different types of autoencoders that have been proposed.
-One of the most basic is a sparse autoencoder.
-In order to force the autoencoder to learn the most interesting dimensionality reduction possible, one can add a loss term based on the sparsity of the layers.
-This forces the autoencoder to learn the sparsest representation possible.
+\begin{figure}[t!]
+\begin{center}
+\includegraphics{figs/Autoencoder.pdf}
+\caption{Example of a single layer autoencoder.
+In this case, both the encoder and the decoder are a single layer neural network.
+These layers can be stacked to create even more complex dimensionality reductions.}
+\end{center}
+\label{fig:ae}
+\end{figure}
+
+The implementation of autoencoders usually uses neural network layers to learn the encoding and decoding functions.
+Figure \ref{fig:ae} demonstrates an example structure of a very simple autoencoder.
+There are a number of different types of autoencoders that are extensions of this basic idea.
+One example is a sparse autoencoder.
+In order to force the autoencoder to learn a more general dimensionality reduction, we can add a sparsity constraint to limit the amount of activations among the network layers.
+This forces the autoencoder to learn a representation with sparse network weights.
 Another type of autoencoder is a denoising autoencoder.
-This type of autoencoder involves taking the original representation and corrupting it and then trying to learn the original representation from the corrupted data.
+This type of autoencoder involves taking a noisy representation and mapping it back to a clean representation of the data.
+This can either be trained on noisy data or it can be given the original representation, corrupt it, and then try to learn the original representation from the corrupted data.
 
-The type of autoencoder that we will focus on in this dissertation is a variational autoencoder.
-Variational autoencoders are a relatively recent idea which takes a probabilistic view of the classical autoencoder idea.
-Instead of just representing the latent space with a number of reduced dimensions, we can use a probability distribution over the latent space.
-Specifically, we learn the mean and the standard deviation of the latent space.
+Sometimes we want to do more than just learn arbitrary encoding and decoding functions.
+For instance, we might want to impose constraints on the encoded representation, also known as the latent space.
+Variational autoencoders (VAEs) are a class of autoencoder that does exactly that.
+VAEs constrain the encoded representation to be a probability distribution.
+So, instead of learning functions that encode/decode the data, the VAE actually learns the parameters of the encoded probability distribution.
+Specifically, the encoder learns to map samples to a mean and standard deviation, which is our latent space.
+Then, when decoding the sample, we can sample randomly using the encoded mean and standard deviation as parameters for our probability distribution.
 
-Now, our loss is composed of two terms.
+We measure loss in this scheme through a combination of two loss terms.
 First, we still care about how well we are able to reconstruct our original data.
-So, we can have a reconstruction loss term.
-However, we also want to learn a reasonable latent space.
-Thus, we can use a measure of distance from the normal distribution.
-To do this, we use KL divergence, a common way of measuring difference between probability distributions.
+So, we can have a reconstruction loss term which measures how well the reconstructed data maps to the original data.
+Our second loss term constrains the latent space to ensure that it is well formed and provides a regularization term against overfitting.
+We use KL divergence, a common way of measuring difference between probability distributions.
+We can calculate the the KL divergence between our latent space and our prior distribution, which in most cases is a normal distribution.
+With the combination of those two loss terms, we can then train the VAE as we would any other neural network--by using gradient descent to minimize the loss function.
