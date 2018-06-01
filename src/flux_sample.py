@@ -13,7 +13,7 @@ parser.add_argument('-s', '--samps', metavar='s', type=int, help='Number of samp
 parser.add_argument('-d', '--dataset', type=str, default='nls')
 parser.add_argument('-f', '--froot', type=str, default='hand')
 parser.add_argument('-r', '--rxn', type=int, default=5, help='Amount in uL for a reaction')
-parser.add_argument('-a', '--addl', type=int, default=1, help='Additional amount of reactants added')
+parser.add_argument('-a', '--addl', type=float, default=1, help='Additional amount of reactants added')
 parser.add_argument('-b', '--batch_size', type=int, default=50, help='Total amount of liquid in uL in a batch')
 
 def get_aa_metab(model, aa, cmpt='c'):
@@ -80,7 +80,8 @@ def update_vals(cfps_conc_tmp, row, n_batches):
             for cmpnd, vals in nrg_mix.iterrows():
                 cfps_conc_tmp.loc[cmpnd] = [cfps_conc_tmp.loc[cmpnd]['start_conc'], (5.0 + row['mdx'] / n_batches)]
         elif col == 'aas':
-            for aa in pdb.Polypeptide.aa3:
+            for aa in pdb.aa3:
+                aa = aa.lower()
                 cfps_conc_tmp.loc[aa] = [cfps_conc_tmp.loc[aa]['start_conc'], (10.0 + row['aas'] / n_batches)]
         else:
             cfps_conc_tmp.loc[col]['amt'] += row[col]
@@ -100,6 +101,7 @@ if __name__ == '__main__':
     #df.drop(columns=['Area_1', 'Area_2', 'Conc_1', 'Conc_2'], inplace=True)
 
     cfps_conc = pd.read_csv('../data/{0}_concs'.format(args.dataset), index_col='compound')
+    #cfps_conc.index = cfps_conc.index.map(lambda x: x.lower())
     cfps_conc.drop('final_conc', inplace=True, axis=1)
     print cfps_conc
     nrg_mix = pd.read_csv('../data/energy_mix.csv', index_col='compound')
