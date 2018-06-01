@@ -20,7 +20,7 @@ def get_conc(aa_f='../data/aa_mix.csv', nrg_f='../data/energy_mix.csv', cfps_sta
                 rxn_amt=5, batch_size=50):
     n_batch = batch_size / rxn_amt
     if cfps_final:
-        cfps_conc = pd.read_csv(cfps_final)
+        cfps_conc = pd.read_csv(cfps_final, index_col='compound')
     else:
         aa_mix = pd.read_csv('../data/aa_mix.csv', index_col='AA')
         nrg_mix = pd.read_csv('../data/energy_mix.csv', index_col='compound')
@@ -40,6 +40,7 @@ def get_conc(aa_f='../data/aa_mix.csv', nrg_f='../data/energy_mix.csv', cfps_sta
         for cmpnd, vals in nrg_mix.iterrows():
             cfps_conc.loc[cmpnd] = [vals['conc_add'], (5.0 / n_batch)]
         for aa, vals in aa_mix.iterrows():
+            aa = aa.lower()
             cfps_conc.loc[aa] = [vals['conc_add'], (10.0 / n_batch)]
         cfps_conc.loc['GENE'] = [dna_conc, (4.96 / n_batch)]
         cfps_conc['final_conc'] = conc_dilution(cfps_conc['start_conc'], cfps_conc['amt'], rxn_amt)
