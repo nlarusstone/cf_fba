@@ -145,6 +145,17 @@ def add_txtl(model, txtl_rxns):
         mod.add_reaction(rxn)
     return mod
 
+def add_but(model):
+    alc_dehydr = cobra.Reaction(id='ALCDBUT', name='Alcohol dehydrogenase (butanal)', subsystem='c')
+    model.add_reaction(alc_dehydr)
+    alc_dehydr.add_metabolites({'btcoa_c': -1, 'h_c': -1, 'nadh_c': -1, 'nad_c': 1, 'btal_c': 1})
+
+    butanol = cobra.Metabolite(id='btol_c', name='1-butanol', compartment='c', charge=0, formula='C4H9OH')
+    but_synth = cobra.Reaction(id='BUTSYN', name='Butanol synthesis', subsystem='c')
+    model.add_reaction(but_synth)
+    but_synth.add_metabolites({'btal_c': -1, 'h_c': -1, 'nadh_c': -1, 'nad_c': 1, butanol: 1})
+    return model
+
 if __name__ == '__main__':
     args = parser.parse_args()
     print args
@@ -157,6 +168,9 @@ if __name__ == '__main__':
         varner = cobra.io.load_json_model('../models/varner.json')
         txtl_rxns = extract_txtl_rxns(varner)
         model = add_txtl(model, txtl_rxns)
+    if args.dataset == 'karim':
+        model = add_but(model)
+        utils.change_obj(model, model.metabolites.btol_c)
     print 'Moving all reactions to same compartment'
     model_cyt = coalesce_cmpts(model)
     print 'Rebuilding medium'
