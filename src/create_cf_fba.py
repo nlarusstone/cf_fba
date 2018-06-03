@@ -72,7 +72,7 @@ def build_medium(model, cfps_conc):
     mod = model.copy()
     
     for metab, vals in cfps_conc.iterrows():
-        flux = utils.conc_to_flux(vals['final_conc']) * 100
+        flux = utils.conc_to_flux(vals['final_conc'])
 
         if metab == 'trna':
             ms = model.metabolites.query('trna')
@@ -176,6 +176,8 @@ if __name__ == '__main__':
     print 'Rebuilding medium'
     model_bare = strip_exchanges(model_cyt, cfps_conc.index[:-1])
     model_cf = build_medium(model_bare, cfps_conc)
+    if args.txtl:
+        utils.change_obj(model_cf, model_cf.metabolites.PROTEIN_RFP)
     print 'Writing out'
     cobra.io.write_sbml_model(filename='../models/{0}_ecoli_cf_base{1}.sbml'.format(args.dataset, '_txtl' if args.txtl else ''), cobra_model=model_cf)
     cfps_conc.to_csv(path_or_buf='../data/{0}_concs'.format(args.dataset))

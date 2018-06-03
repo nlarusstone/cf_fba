@@ -23,7 +23,7 @@ def change_conc(model, cfps_conc):
     mod = model.copy()
     
     for metab, vals in cfps_conc.iteritems():
-        flux = utils.conc_to_flux(vals) * 100
+        flux = utils.conc_to_flux(vals)
 
         if metab == 'trna':
             ms = model.metabolites.query('trna')
@@ -34,6 +34,7 @@ def change_conc(model, cfps_conc):
         for m in ms:
             rxn_nm = 'EX_' + m.id
             rxn = mod.reactions.get_by_id(rxn_nm)
+            rxn.lower_bound = -1 * flux
             rxn.upper_bound = flux
             #mod.add_boundary(metabolite=m, type='exchange', lb=0, ub=flux)
             #mod.add_boundary(metabolite=m, type='cfps-medium', reaction_id=rxn_nm, lb=0, ub=flux) 
@@ -73,11 +74,12 @@ def get_exp_data(froot):
             conds_full = conds.reindex(np.repeat(conds.index.values, 2)).reset_index()
         conds_full['OUT'] = outs.reset_index(drop=True)
         conds_avg = conds_full.groupby('index').mean()
-        conds_norm = conds_avg / conds_avg.max()
+        conds_norm = conds_avg
+        conds_norm['OUT'] = conds_norm['OUT'] / conds_norm['OUT'].max()
     conds_norm.to_csv('../data/{0}_EXPERIMENT.csv'.format(froot))
     return conds_norm
 
-def update_vals(cfps_conc_tmp, row, n_batches, replace=False):
+def update_vals(cfps_conc_tmp, row, n_batches, nrg_mix=None, replace=False):
     for col in row.index[:-1]:
         if col == 'nts':
             for nt in ['atp', 'gtp', 'ctp', 'utp']:
@@ -103,7 +105,10 @@ if __name__ == '__main__':
     addl_amt = args.addl
     batch_size = args.batch_size
     n_batches = batch_size / rxn_amt
-    models = ['{0}_ecoli_cf_base{1}.sbml'.format(args.dataset, txtl) for txtl in ['_txtl', '']]
+    l_txtl = ['']
+    if not args.froot == 'karim':
+        l_txtl.append('_txtl')
+    models = ['{0}_ecoli_cf_base{1}.sbml'.format(args.dataset, txtl) for txtl in l_txtl]
 
     print 'Read in data'
     df = get_exp_data(args.froot)
@@ -113,7 +118,8 @@ if __name__ == '__main__':
     if not args.froot == 'karim':
         cfps_conc.drop('final_conc', inplace=True, axis=1)
         nrg_mix = pd.read_csv('../data/energy_mix.csv', index_col='compound')
-    print cfps_conc
+    else:
+        nrg_mix = None
 
     print 'Time to generate model specific conditions'
     for model_f in models:
@@ -122,13 +128,12 @@ if __name__ == '__main__':
         for idx, row in df.iterrows():
             print idx
             cfps_conc_tmp = cfps_conc.copy()
-            cfps_conc_tmp = update_vals(cfps_conc_tmp, row, n_batches, replace=args.froot == 'karim')
-            rxn_amt += addl_amt
+            cfps_conc_tmp = update_vals(cfps_conc_tmp, row, n_batches, nrg_mix=nrg_mix, replace=args.froot == 'karim')
+            tot_rxn_amt = rxn_amt + addl_amt
             if args.froot == 'karim':
                 exp_concs = cfps_conc_tmp['final_conc']
             else:
-                exp_concs = conc_dilution(cfps_conc_tmp['start_conc'], cfps_conc_tmp['amt'], rxn_amt)
-            print exp_concs
+                exp_concs = conc_dilution(cfps_conc_tmp['start_conc'], (rxn_amt / 5.0) * cfps_conc_tmp['amt'], tot_rxn_amt)
             model_i = change_conc(model, exp_concs)
             print model_i.medium
             samples_i = sample(model_i, flux_sz, processes=multiprocessing.cpu_count() - 1)

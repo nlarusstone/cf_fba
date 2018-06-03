@@ -85,19 +85,17 @@ def gen_train_test(data, y=None):
         return train_test_split(data, random_state=42)
     #return data[train_ind], y[train_ind], data[test_ind], y[test_ind]
 
-def read_data(dir_name, resamp=True, scale=None, n_rows=50000):
-    df = pd.read_csv('../data/Karim_MetEng_2018_Figure2_Data.csv')
-    n_experiments = df.shape[0]
+def read_data(dir_name, flux_root, n_experiments, obj_name, resamp=True, scale=None, n_rows=50000):
     flux_dfs = []
-    btol_col = None
+    obj_col = None
     max_sz = (None, None)
     for i in range(n_experiments):
-        d = pd.read_csv('{0}/fluxes_{1}'.format(dir_name, i), index_col=0)
-        new_btol_col = d.columns.get_loc('DM_btol_c')
-        if btol_col:
-            assert(new_btol_col == btol_col)
+        d = pd.read_csv('{0}/{1}_{2}'.format(dir_name, flux_root, i), index_col=0)
+        new_obj_col = d.columns.get_loc(obj_name)
+        if obj_col:
+            assert(new_obj_col == obj_col)
         else:
-            btol_col = new_btol_col
+            obj_col = new_obj_col
         if d.shape[1] > max_sz[0]:
             max_sz = (d.shape[1], d.columns)
         flux_dfs.append(d)
@@ -105,7 +103,7 @@ def read_data(dir_name, resamp=True, scale=None, n_rows=50000):
     fluxes = []
     for d in flux_dfs:
         vals = d.reindex(columns=max_sz[1]).fillna(0)
-        assert(vals.columns.get_loc('DM_btol_c') == btol_col)
+        assert(vals.columns.get_loc(obj_name) == obj_col)
         fluxes.append(vals.values)
     if resamp:
         samp_data = np.stack(fluxes, axis=1)
@@ -124,4 +122,4 @@ def read_data(dir_name, resamp=True, scale=None, n_rows=50000):
         y_train, y_test = None, None
     print 'Min: {0}, Max: {1}'.format(np.min(X_train), np.max(X_train))
     #np.savez_compressed('../data/fluxes_resampled', train=X_train, test=X_test)
-    return X_train, y_train, X_test, y_test, btol_col, cols
+    return X_train, y_train, X_test, y_test, obj_col, cols

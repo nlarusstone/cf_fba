@@ -16,6 +16,7 @@ from sklearn.preprocessing import maxabs_scale, minmax_scale, normalize, scale, 
 import argparse
 import pickle
 import flux_utils as futils
+import create_dataset as dataset
 np.random.seed(42)
 
 parser = argparse.ArgumentParser(description='VAE on metabolic fluxes')
@@ -27,7 +28,15 @@ parser.add_argument('-n', '--epochs', metavar='n', type=int, help='Number of epo
                     default=100)
 parser.add_argument('--corr', dest='corr', help='Correlation loss', default=True, action='store_true')
 parser.add_argument('--no-corr', dest='corr', help='Correlation loss', action='store_false')
-parser.add_argument('-s', '--scale', metavar='s', type=str, default=None, help='type of data scaling')
+parser.add_argument('-s', '--scale', metavar='s', type=str, default='flux_zero', help='type of data scaling')
+parser.add_argument('-l','--layers', nargs='+', help='Layer sizes', type=int, default=[1024])
+
+
+parser.add_argument('-f', '--froot', type=str, default='hand')
+parser.add_argument('-r', '--resamp', dest='resamp', help='Resample', default=False, action='store_true')
+parser.add_argument('--no-resamp', dest='resamp', help='Dont resample', action='store_false')
+parser.add_argument('-t', '--txtl', dest='txtl', default=False, action='store_true')
+parser.add_argument('--no-txtl', dest='txtl', action='store_false')
 
 class LossHistory(Callback):
     def __init__(self):
@@ -38,7 +47,7 @@ class LossHistory(Callback):
     def on_epoch_end(self, epoch, logs={}):
         y_true = self.validation_data[0]
         y_pred = self.model.predict(self.validation_data[0])
-        cor_loss = -1 * corr_loss(df['AVG.1'].values, y_pred[:, :, output_ind], be=np)
+        cor_loss = -1 * corr_loss(y_vals, y_pred[:, :, obj_col.value], be=np)
         xent_loss = y_true.shape[-1] * np.mean(np.square(y_true - y_pred), axis=-1)
         inputs = [K.learning_phase()] + self.model.inputs
         zvar = K.function(inputs=inputs, outputs=[self.model.get_layer('z_log_var').output])
@@ -56,8 +65,12 @@ class LossHistory(Callback):
 def sampling(args):
     epsilon_std = 1.0
     z_mean, z_log_var = args
-    epsilon = K.random_normal(shape=(K.shape(z_mean)[0], K.shape(z_mean)[1], K.shape(z_mean)[2]), mean=0.,
-                              stddev=epsilon_std)
+    if flat:
+        epsilon = K.random_normal(shape=(K.shape(z_mean)[0], K.shape(z_mean)[1]), mean=0.,
+                                  stddev=epsilon_std)
+    else:
+        epsilon = K.random_normal(shape=(K.shape(z_mean)[0], K.shape(z_mean)[1], K.shape(z_mean)[2]), mean=0.,
+                                  stddev=epsilon_std)
     return z_mean + K.exp(z_log_var / 2) * epsilon
 
 def corr_loss(y_pred, y_true, be=K):
@@ -72,11 +85,12 @@ def corr_loss(y_pred, y_true, be=K):
 def calc_kl_loss(z_log_var, z_mean):
     return - 0.5 * K.sum(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
 
-def build_vae(X_shape, n_experiments, targets, output_ind, layer_sizes=[256], latent_dim=2, batch_size=256, use_corr=True, scale_type=None):
-    encoded_dim1 = 1024
-    encoded_sz = 256
+def build_vae(X_shape, n_experiments, targets, output_ind, layer_sizes=[256], latent_dim=2, batch_size=256, use_corr=True, scale_type=None, flat=False):
     # Encoder network
-    x = Input(shape=(n_experiments, X_shape,))
+    if flat:
+        x = Input(shape=(X_shape,))
+    else:
+        x = Input(shape=(n_experiments, X_shape,))
     h = Dense(layer_sizes[0], activation='relu')(x)
     for layer_sz in layer_sizes[1:]:
         h = Dense(layer_sz, activation='relu')(h)
@@ -84,7 +98,10 @@ def build_vae(X_shape, n_experiments, targets, output_ind, layer_sizes=[256], la
     z_log_var = Dense(latent_dim, name='z_log_var')(h)
     
     # Sample points from latent space
-    z = Lambda(sampling, output_shape=(n_experiments,latent_dim,))([z_mean, z_log_var])
+    if flat:
+        z = Lambda(sampling, output_shape=(latent_dim,))([z_mean, z_log_var])
+    else:
+        z = Lambda(sampling, output_shape=(n_experiments,latent_dim,))([z_mean, z_log_var])
     
     # Decoder network
     decoder_h = Dense(layer_sizes[-1], activation='relu')
@@ -123,7 +140,10 @@ def build_vae(X_shape, n_experiments, targets, output_ind, layer_sizes=[256], la
     encoder = Model(x, z_mean)
 
     # generator, from latent space to reconstructed inputs
-    decoder_input = Input(shape=(n_experiments, latent_dim,))
+    if flat:
+        decoder_input = Input(shape=(latent_dim,))
+    else:
+        decoder_input = Input(shape=(n_experiments, latent_dim,))
     _h_decoded = decoder_h(decoder_input)
     for decoder_layer in decoder_layers:
         _h_decoded = decoder_layer(_h_decoded)
@@ -138,36 +158,50 @@ if __name__ == '__main__':
     batch_size = args.batch
     n_epochs = args.epochs
     use_corr = args.corr
+    flat = not args.resamp
+    if flat:
+        use_corr = False
     scale = args.scale
     latent_dim = args.dim
+    layer_szs = args.layers
 
-    df = pd.read_csv('../data/Karim_MetEng_2018_Figure2_Data.csv')
-    df.drop(columns=['Area_1', 'Area_2', 'Conc_1', 'Conc_2'], inplace=True)
-    n_experiments = df.shape[0]
+    #df = pd.read_csv('../data/Karim_MetEng_2018_Figure2_Data.csv')
+    #df.drop(columns=['Area_1', 'Area_2', 'Conc_1', 'Conc_2'], inplace=True)
+    #n_experiments = df.shape[0]
 
     #dat = np.load('../data/fluxes_resampled.npz')
     #X_train, X_test = dat['train'], dat['test']
-    X_train, y_train, X_test, y_test, btol_col, cols = futils.read_data('../data/flux_samps_2k', scale=scale)
+    #X_train, y_train, X_test, y_test, btol_col, cols = futils.read_data('../data/flux_samps_2k', scale=scale)
 
-    X_shape, n_experiments = X_train.shape[2], df.shape[0]
-    targets = tf.convert_to_tensor(df['AVG.1'].values, dtype=tf.float32)
-    output_ind = btol_col
-    vae, encoder, generator = build_vae(X_shape, n_experiments, targets, output_ind, [1024, 256], latent_dim, batch_size, use_corr, scale)
-    lh = LossHistory()
+    if args.froot == 'karim' and args.txtl:
+        quit()
+    fname = '../data/{0}{1}_{2}_fluxes'.format(args.froot, '_txtl' if args.txtl else '', 'stacked' if args.resamp else 'flat')
+    X_train, y_train, X_test, y_test, obj_col, cols, y_vals_d = dataset.get_dataset(fname)
+    y_vals = np.array(y_vals_d)
+
+    X_shape, n_experiments = X_train.shape[-1], y_vals.shape[0]
+    targets = tf.convert_to_tensor(y_vals, dtype=tf.float32)
+    vae, encoder, generator = build_vae(X_shape, n_experiments, targets, obj_col.value, layer_szs, latent_dim, batch_size, use_corr, scale, flat)
     es = EarlyStopping(patience=10)
-    vae.fit(X_train, shuffle=True, epochs=n_epochs, batch_size=batch_size,
-            validation_data=(X_test, None), callbacks=[es, lh])
-    with open('../models/losses_epochs={0}_batch={1}_dimension={2}_corr={3}_scale={4}.h5'.format(n_epochs, batch_size, latent_dim, use_corr, scale), 'w') as f:
-        pickle.dump(file=f, obj={'recon_losses': lh.recon_losses, 'kl_losses': lh.kl_losses, 'corr_losses': lh.corr_losses})
-    vae.save('../models/vae_epochs={0}_batch={1}_dimension={2}_corr={3}_scale={4}.h5'.format(n_epochs, batch_size, latent_dim, use_corr, scale))
-    encoder.save('../models/encoder_epochs={0}_batch={1}_dimension={2}_corr={3}_scale={4}.h5'.format(n_epochs, batch_size, latent_dim, use_corr, scale))
-    generator.save('../models/generator_epochs={0}_batch={1}_dimension={2}_corr={3}_scale={4}.h5'.format(n_epochs, batch_size, latent_dim, use_corr, scale))
+    cbs = [es]
+    if use_corr:
+        lh = LossHistory()
+        cbs.append(lh)
+    vae.fit(X_train, shuffle='batch', epochs=n_epochs, batch_size=batch_size,
+            validation_data=(X_test, None), callbacks=cbs)
+    fname = 'epochs={0}_batch={1}_dimension={2}_corr={3}_scale={4}_froot={5}_txtl={6}_nlayers={7}_resamp={8}.h5'.format(n_epochs, batch_size, latent_dim, use_corr, scale, args.froot, args.txtl, len(layer_szs), args.resamp)
+    vae.save('../models/vae_{0}'.format(fname))
+    encoder.save('../models/encoder_{0}'.format(fname))
+    generator.save('../models/generator_{0}'.format(fname))
+    if use_corr:
+        with open('../models/losses_{0}'.format(fname), 'w') as f:
+            pickle.dump(file=f, obj={'recon_losses': lh.recon_losses, 'kl_losses': lh.kl_losses, 'corr_losses': lh.corr_losses})
 
     x_test_encoded = encoder.predict(X_test, batch_size=batch_size)
     x_test_gen = generator.predict(x_test_encoded, batch_size=batch_size)
 
     corrs = []
     for i in range(x_test_gen.shape[0]):
-        corr = scipy.stats.pearsonr(x_test_gen[i, :, btol_col], df['AVG.1'])
+        corr = scipy.stats.pearsonr(x_test_gen[i, :, obj_col.value],)
         corrs.append(corr)
     print 'Mean correlation: ', np.mean(corrs, axis=0)
