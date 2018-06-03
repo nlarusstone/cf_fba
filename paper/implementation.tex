@@ -95,7 +95,7 @@ In order to test different reaction conditions, we added an additional 1 uL of v
 For this dataset, we experimented by adding 16 differing ratios of sugar, phosphate, potassium, and nucleotides.
 The DNA circuit in the CFPS system simply produces RFP, so we were able to judge the amount of protein production by measuring fluorescence readout with a plate reader..
 
-However, there are multiple downsides to doing this by hand, so our second dataset was created using a Labcyte Echo acoustic liquid handler~\cite{TODO}.
+However, there are multiple downsides to doing this by hand, so our second dataset was created using a Labcyte Echo acoustic liquid handler.
 Creating large datasets by hand takes a long time and limits the amount of data one can generate.
 Additionally, pipetting by hand has an intrinsic error, so we hoped that automating the creation of the reactions would reduce human error.
 The Echo is an acoustic liquid handler that can combine different amounts of liquid to create each of the CFPS reactions.
@@ -109,123 +109,145 @@ Since it was created in different lab conditions, we can check that our model is
 The pathway that they investigated is an inherently metabolic pathway, so we were can see if our metabolic model is better able to learn about these types of gene circuits.
 
 \section{Data ingestion and incorporation}
-2 csvs
-1 for experimental setup
-2 columns, one with canonical abbreviation of chemical, other with end concentration
-This data then gets converted into fluxes and put in as a constraining exchange reaction
 
 \subsection{Data ingestion}
 Since this system is intended to aid biologists in their experiments, we wanted to make it end-to-end and as easy to use as possible.
 With that in mind, we created tools to automatically incorporate the experimental setup into the models.
-There are two main ways that the experimental setup could show up.
+Figure \ref{fig:ingest} shows the two main ways that the experimental setup could show up.
 The first is in the form of end concentrations of the different reactants in the cell-free system.
-This is the easiest because we are able to convert concentrations into fluxes.
-Thus, our tool is able to ingest that in the form of a CSV that has a column with the name of the reactant and the final concentration.
+This is the easiest because in that case we can simply convert concentrations into fluxes.
+Fluxes have the unit mol/min/gDW, so we can convert metabolite concentrations into flues using the following equation from MetaboTools~\cite{aurich2016metabotools}:
+\begin{equation}
+flux = \frac{metab_conc}{cell_conc * t * 1000.0}
+\end{equation}
+where we set t to be 24, the time scale of our reactions.
+Using this equation our tool is able to ingest a CSV mapping the name of the reactant to the final concentration and turn them into flux constraints.
 
-However, we also support biologists who just know the relative amounts of each reactant they add to the mixture without knowing the final concentration.
-Thus, we support a format whereby a user can upload a CSV that contains the name of each reactant, the molecular weight, the volume used to create the stock, the weight used to create the stock, and the final volume added to the cell-free reaction.
-From that, we are able to calculate the final concentrations and manipulate the data into the same form as the first type of upload.
-Once we have that, we can unify the pipeline.
+However, we also support users who might only know the relative amounts of each reactant that they are adding.
+This is important because many biologists may have a protocol that they follow that tells them how to make a CFPS system, but they may not know the concentrations in their mixture.
+To support these users, we allow them to upload a CSV (or combination of CSVs) that contains information about each reactant used to make the system.
+For each reactant, we require name of each reactant, the molecular weight, the volume used to create the stock, the weight used to create the stock, and the final volume added to the cell-free reaction.
+We parse this information to calculate the final concentration of each reactant in the CFPS system.
+Once we have manipulated the data into the same form as the first type of upload, we can proceed with the rest of our computational pipeline.
 
 \begin{figure}[t!]
 \begin{center}
 \includegraphics{figs/DataIngestion.pdf}
-\caption{}
+\caption{Two possible ways to incorporate the experimental setup in our pipeline.
+In Start 1, the user already knows the final concentrations of each reactant and can upload that as a CSV.
+Otherwise, the user can upload information about the reactants that are added and our tools will automatically calculate the final concnetrations of each reactant.}
 \end{center}
 \label{fig:ingest}
 \end{figure}
 
 \subsection{Data Incorporation} \label{sec:incorp}
+After we ingest the experimental setup, we need to incorporate it into our FBA model.
+We use the cobrapy python package~\cite{ebrahim2013cobrapy} to handle our FBA models.
+The base model that we start with is the iJO1366 model for E. coli which consists of 1805 metabolites and 2583 reactions~\cite{orth2011comprehensive}.
+This model needs to be adapted to cell-free systems because they no longer have the same physical structure as E. coli cells.
 First, we need to make the cell-free reaction reflect the fact that there are no longer any membranes or cellular compartments.
 We do this by iterating over every reaction that contains a periplasmic or extracellular component.
 For each reaction, we then replace every metabolite with either the corresponding cytosolic metabolite or, if no corresponding metabolite exists, we just move the metabolite wholesale.
-Thus, at the end, we have all of the reactions occurring in the same location, which reflects biological reality.
+At this point, we have all of the reactions occurring in the same location, which reflects how a CFPS system works.
 
-Our next task is to remove exchanges and replace the medium with our data.
-We do this by using the concentrations we calculated from the setup data earlier.
-For each of the reactants that we have, we remove the previous exchange reactions.
-Then, we convert the final concentration to a flux using this equation: TODO.
-Finally, we add back in the exchange reactions with that flux as an upper bound.
-This represents the fact that the metabolite could be entirely used up, but it doesn't have to be used at that level.
-At the end of this, we have a base cell-free model.
+Our next task is to handle how exchange reactions are dealt with in the model.
+Exchange reactions are pseudo-reactions that allow us to constraint the amount of a reactant that is allowed to be in the model.
+For each of the reactants in our CFPS system, we replace the bounds on the exchange reactions based on the fluxes we calculated from the setup data earlier.
+At the end of this process, we have converted the full-scale E. coli model to better approximate a CFPS system.
+We will call this our base cell-free model.
 
-We can use this model as a basis, but we can also extend this model to explicitly incorporate the transcription and translation reactions we care about.
-Given the sequence of the gene of interest, we automatically generate the hand-crafted cell-free FBA model from the Varner lab in Julia~\cite{vilkhovoy2017sequence}.
-We can then convert that model to python and extract the transcription and translation reactions.
+We also extend this model to explicitly incorporate the transcription and translation reactions that are so crucial to CFPS systems.
+Most FBA models do not explicitly consider the transcription and translation reactions.
+However, earlier work from the Varner lab incorporated these reactions into a FBA model specifically to try to model a cell-free system~\cite{vilkhovoy2017sequence}.
+This earlier work created the FBA model by hand and is written in Julia.
+We built helper tools such that, given the sequence of the gene of interest, we can automatically generate a version of the Varner model.
+Next, we convert that model to Python and extract the relevant transcription and translation reactions.
 We incorporate those reactions into our model and then can set the production of the protein of interest as our FBA objective.
-
-Once we've done this, we need to create differential models based on the different experimental data setups.
-To do this, we take in a CSV consisting of the experimental conditions and a quantitative output.
-Each row represents a different experiment, while the columns represent different starting conditions.
-We can then re-calculate the final concentrations of each of the reactants for each experimental starting condition and create a modified FBA model for each starting conditions.
-
+This model is called our TXTL cell-free model.
 
 %As a linear programming problem, we also need to set a custom objective to optimize for.
 %Usually this is the biomass objective, which encapsulates everything necessary for bacterial growth.
 %However, since we don't care about growth, just production, we can use our own objectives.
 %For us, the typical objective will be the production of some protein since that's the purpose of the CFPS.
 
-\section{FBA and flux sampling}
+\section{Dataset generation}
 
-\subsection{FBA}
+\subsection{Model generation}
+Once we've created these base models, we can use them in conjunction with the different experimental conditions to create a different model for each condition.
+To do this, we take in a CSV consisting of the experimental conditions and a quantitative output.
+Each row represents a different experiment.
+The columns contain either the different concentrations for starting reactants or the different amounts added.
+In the latter case, we can re-calculate the final concentrations of each of the reactants for each experimental starting condition.
+In both cases, once we have the new final concentrations for each reactant we create a new FBA model.
 
 Were we simply to solve the different models we've created, many would have the same flux results.
-When we do solve these models without performing dimensionality reduction, we get a correlation of TODO (nearly 0) with our experimental results.
+For these naive models, Section \ref{sec:cmp} shows that they do not describe our biological results very well.
 Clearly, FBA alone cannot describe the full richness of a real system.
-One can imagine FBA as a coarse bijective function, so points that vary only slightly in the input space will get projected into the same output point.
-We can do better by first passing the fluxes through a dimensionality reduction technique such as a VAE.
-
 We also have the problem that the model is overspecified.
 These FBA models contain every reaction that's occurring in a steady state bacterium
 While we do harvest the bacteria at steady state, some enzymes will degrade and others will not be as important in cell-free systems.
-These types of changes can't be encapsulated solely through a change of objective function.
+These types of changes can't be encapsulated solely through a change of objective function and changing to a single-compartment reaction.
 
-If we just run the naive FBA models on the different reaction conditions, we find that we have a correlation of almost 0.
-This means that the typical FBA model just doesn't describe CFPS
-So, we want to use a VAE to improve the way we describe CFPS.
-However, we first need a large dataset to train on.
-The way we accomplish this is by flux sampling from each model.
+One can imagine FBA as a coarse bijective function, so points that vary only slightly in the input space will get projected into the same output point.
+We want to do better by first passing the fluxes through a dimensionality reduction technique such as a VAE.
+However, in order to do this, we first need a large dataset of fluxes to train on.
+Since we only have a small number (dozens, not hundreds) of models, we cannot simply use the fluxes from the optimal solution to the model.
+We supplement our dataset by flux sampling from each model.
 
 \subsection{Flux sampling}
-In order to determine possible fluxes through each reaction, need to sample from it
-We use OptGP sampler to sample 2000 fluxes from each of our models.
-Can see that increasing the number of samples leads to a more normal distribution
+Flux sampling is the process of sampling possible fluxes through each reaction.
+This gives us a distribution of fluxes for each reaction, for each model.
+We use optGpSampler to sample 2000 fluxes from each of our models~\cite{megchelenbrink2014optgpsampler}.
 Figure \ref{fig:fl-samps} shows what happens as we increase the number of samples we draw from each model.
+Clearly, we can see that increasing the number of samples leads to a more normal distribution.
 
-We sample from our different reactions to generate a new dataset.
-Each experimental condition has slightly different flux distributions for each reaction.
-This is important because it's these minor perturbation that we hope to use to create a specified model.
-We then combine these sampled fluxes into a dataset of size N x E x R where N is the number of samples, E is the number of experiments, and R is the number of reactions.
+%TODO: Insert figure
+
+Each model has different experimental conditions and therefore has slightly different flux distributions for each reaction.
+So, after we generate flux samples for each model, we can combine the sampled fluxes to generate two new datasets.
+One dataset is flat--meaning we simply concatenate all of the sampled fluxes into a dataset of size $2000E x R$ where $E$ is the number of experiments and $R$ is the number of reactions.
+This dataset is useful to investigate the fluxes and see if we can perform dimensionality reduction to gain insights on the fluxes in our models in general.
+The other dataset we can make involves sampling with replacement from the fluxes of each model and then stacking the fluxes to create a new dataset.
+This dataset has size $N x E x R$ where N is the number of samples with replacement we drew.
+Using this dataset allows us to incorporate the correlation term in our VAE.
 
 \section{VAE}
-We next implemented a VAE in order to examine the latent space of the fluxes.
-Our original implementation simply took in the flux dataset as a $n x D$ matrix X with a vector $n x 1$ y that specified the "class" of each flux (i.e. which model it came from).
-We then ran it through a 2 layer autoencoder with layer sizes TODO and TODO.
-We experimented with latent dimensions of size 2 and 10.
-This created a latent space of size $n x 2$.
+The key part of our system was the usage of a Variational Autoencoder in order to reduce the dimensionality of our model.
+Our VAE was implemented in Keras~\cite{chollet2015keras} and the implementation was designed to be as modular as possible.
+We wanted to make the VAE as modular as possible so that end-users would be able to easily change the parameters of the VAE without having to have any prior training in deep learning.
+Thus, our implementation is able to take in either a flat or stacked dataset, a list of layer sizes, the number of latent dimensions, how to scale the inputs, and whether or not to use the custom correlation loss function.
 
-We were able to explore this latent space.
-However, this only reflects information about the fluxes.
-We wanted to incorporate the experimental data we'd gathered--we know which models should be producing more fluxes than the others.
-We used this insight to create a new loss function for our autoencoder.
+The structure of the VAEs we used are as follows.
+We experimented with two different layer structures, a 2-layer VAE with layer sizes 1024 and 256 and a 3-layer VAE with layer sizes 1024, 512, and 256.
+We also tried using latent dimensions of size 2 and 10.
+For activations between layers of the encoder and the decoder, we used ReLu activations~\cite{nair2010rectified}.
+The activation of our final layer of the decoder is one of sigmoidal, tanh, or linear, depending on how the dataset was scaled.
+When using the custom correlation loss function, we required a stacked dataset, otherwise a flat dataset could be used.
 
-\section{Correlated VAEs}
-We have additional information that we can use to perturb our latent space.
-We know what the relative rankings of the different models should be.
-So, instead of just having the typical loss function of an autoencoder: reconstruction loss and KL divergence, we add another term that we call correlation loss.
-We are forced to use pearson correlation loss because we can write that in a differentiable manner.
+\subsection{Correlated VAE}
+The key insight for the correlation loss is that we didn't just want to reduce our dimensionality in an unbiased way--we care about how well it describes real-world data.
+Thus, we can use our additional information to perturb the latent space to better reflect biological reality.
+We know what the relative rankings of the different models should be, so we can add a correlation loss term between the data and the .
+Recall Equation \ref{eqn:vae-loss} that described the VAE loss function.
+We now train with a modified loss function:
+
+\begin{equation}\label{eqn:corr-loss}
+\mathcal{L}(\theta, \phi) = - E[\log p_{\theta}(x_i | z)] + KL(q_{\phi}(z | x_i) || p(z)) + corr(x_i', d)\\
+\end{equation}
+
+where $x_i'$ is the reconstructed data and $d$ is our scaled biological data.
 
 \section{FBA model reduction}
-Finally, now that we have run our models through the Corr-VAE and achieved a latent representation, we need to use the insights we've generated to create better models.
-We can do this in two ways.
-Firstly, we could do this by any time we want to generate new data, we first generate the FBA model using the tool chain described above.
-Then, using the trained autoencoder, we can transform the optimal fluxes and get the shifted optimum and see if that still is better.
-This could be very useful for batch variation.
+Now that we have run our models through our correlational VAE we have a lower dimensional representation of the model.
+We can use this lower dimensional representation to create a better cell-free model.
+One way we could use our system to do this is by running the whole system on each set of new data.
+We first generate the FBA model using the tool chain described above.
+Then, using the trained autoencoder, we can transform the optimal fluxes and get the reconstructed fluxes that better describe a cell-free system.
+This could be very useful for batch variation or comparisons between different labs.
 
-However, it would also be nice to not have to run it through an autoencoder each time.
-Instead, we could use the insights we've gained to actually create a more accurate reduced model.
+However, one of our goals is to build a new cell-free model.
+So we can use the dimensionality reduction from the VAE  to create a more accurate reduced model.
 We do this by thresholding the latent space and removing reactions that have fluxes similar to 0.
-This allows us to create more useful reduced models.
-Now, running these reduced models with the differential conditions gives us a correlation of up to 0.5.
-
-\cite{ebrahim2013cobrapy}
+This simple thresholding allows us to identify reactions that are not important in cell-free systems because they do not vary between different runs of our cell-free reactions.
+Section \ref{sec:cmp} shows that these reduced models with the differential conditions give us better explanations of experimental data than full GEMs.
+%RL agent
