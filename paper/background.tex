@@ -65,6 +65,7 @@ In order to extract insights from the data, we need to use dimensionality reduct
 
 \section{Autoencoders}
 Autoencoders are a dimensionality reduction technique with a very simple idea: given a dataset, try to reconstruct that dataset by passing it through a lower dimensional subspace.
+This is performed by training an encoder network that learns how to map from the original dataset to the lower dimensional data and a decoder network that can map from the low dimensional subspace back to the subspace of the original data.
 The original idea behind autoencoders was that this lower dimensional representation of the data functioned as a compressed version of the data.
 Instead of hand designing compression/decompression algorithms, these functions can be learned to be application specific.
 These autoencoders are often worse than hand-designed compression algorithms and have a lot of difficulty competing with classic algorithms on problems such as image compression~\cite{theis2017lossy}.
@@ -106,3 +107,12 @@ Our second loss term constrains the latent space to ensure that it is well forme
 We use Kullback Leiber (KL) divergence, a common way of measuring difference between probability distributions.
 We can calculate the the KL divergence between our latent space and our prior distribution, which in most cases is a normal distribution.
 With the combination of those two loss terms, we can then train the VAE as we would any other neural network--by using gradient descent to minimize the loss function.
+
+We denote $x_i \in X$ as our data and $z$ as our latent representation.
+Our encoder network can be represented by the function $p$ which has parameters $\theta$.
+Similarly, our decoder can be represented as a posterior distribution $q$ that is parameterized by $\phi$.
+Then the loss function of a VAE can therefore be written out as follows:
+
+\begin{equation}\label{eqn:vae-loss}
+\mathcal{L}(\theta, \phi) = - E[\log p_{\theta}(x_i | z)] + KL(q_{\phi}(z | x_i) || p(z)) \\
+\end{equation}

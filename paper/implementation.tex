@@ -95,7 +95,7 @@ In order to test different reaction conditions, we added an additional 1 uL of v
 For this dataset, we experimented by adding 16 differing ratios of sugar, phosphate, potassium, and nucleotides.
 The DNA circuit in the CFPS system simply produces RFP, so we were able to judge the amount of protein production by measuring fluorescence readout with a plate reader..
 
-However, there are multiple downsides to doing this by hand, so our second dataset was created using a Labcyte Echo acoustic liquid handler~\cite{TODO}.
+However, there are multiple downsides to doing this by hand, so our second dataset was created using a Labcyte Echo acoustic liquid handler.
 Creating large datasets by hand takes a long time and limits the amount of data one can generate.
 Additionally, pipetting by hand has an intrinsic error, so we hoped that automating the creation of the reactions would reduce human error.
 The Echo is an acoustic liquid handler that can combine different amounts of liquid to create each of the CFPS reactions.
@@ -142,6 +142,7 @@ Otherwise, the user can upload information about the reactants that are added an
 
 \subsection{Data Incorporation} \label{sec:incorp}
 After we ingest the experimental setup, we need to incorporate it into our FBA model.
+We use the cobrapy python package~\cite{ebrahim2013cobrapy} to handle our FBA models.
 The base model that we start with is the iJO1366 model for E. coli which consists of 1805 metabolites and 2583 reactions~\cite{orth2011comprehensive}.
 This model needs to be adapted to cell-free systems because they no longer have the same physical structure as E. coli cells.
 First, we need to make the cell-free reaction reflect the fact that there are no longer any membranes or cellular compartments.
@@ -200,44 +201,53 @@ We use optGpSampler to sample 2000 fluxes from each of our models~\cite{megchele
 Figure \ref{fig:fl-samps} shows what happens as we increase the number of samples we draw from each model.
 Clearly, we can see that increasing the number of samples leads to a more normal distribution.
 
-TODO: Insert figure
+%TODO: Insert figure
 
-We sample from our different reactions to generate a new dataset.
-Each experimental condition has slightly different flux distributions for each reaction.
-This is important because it's these minor perturbation that we hope to use to create a specified model.
-We can then combine these sampled fluxes into a dataset of size N x E x R where N is the number of samples, E is the number of experiments, and R is the number of reactions.
+Each model has different experimental conditions and therefore has slightly different flux distributions for each reaction.
+So, after we generate flux samples for each model, we can combine the sampled fluxes to generate two new datasets.
+One dataset is flat--meaning we simply concatenate all of the sampled fluxes into a dataset of size $2000E x R$ where $E$ is the number of experiments and $R$ is the number of reactions.
+This dataset is useful to investigate the fluxes and see if we can perform dimensionality reduction to gain insights on the fluxes in our models in general.
+The other dataset we can make involves sampling with replacement from the fluxes of each model and then stacking the fluxes to create a new dataset.
+This dataset has size $N x E x R$ where N is the number of samples with replacement we drew.
+Using this dataset allows us to incorporate the correlation term in our VAE.
 
 \section{VAE}
-We next implemented a VAE in order to examine the latent space of the fluxes.
-Our original implementation simply took in the flux dataset as a $n x D$ matrix X with a vector $n x 1$ y that specified the "class" of each flux (i.e. which model it came from).
-We then ran it through a 2 layer autoencoder with layer sizes TODO and TODO.
-We experimented with latent dimensions of size 2 and 10.
-This created a latent space of size $n x 2$.
+The key part of our system was the usage of a Variational Autoencoder in order to reduce the dimensionality of our model.
+Our VAE was implemented in Keras~\cite{chollet2015keras} and the implementation was designed to be as modular as possible.
+We wanted to make the VAE as modular as possible so that end-users would be able to easily change the parameters of the VAE without having to have any prior training in deep learning.
+Thus, our implementation is able to take in either a flat or stacked dataset, a list of layer sizes, the number of latent dimensions, how to scale the inputs, and whether or not to use the custom correlation loss function.
 
-We were able to explore this latent space.
-However, this only reflects information about the fluxes.
-We wanted to incorporate the experimental data we'd gathered--we know which models should be producing more fluxes than the others.
-We used this insight to create a new loss function for our autoencoder.
+The structure of the VAEs we used are as follows.
+We experimented with two different layer structures, a 2-layer VAE with layer sizes 1024 and 256 and a 3-layer VAE with layer sizes 1024, 512, and 256.
+We also tried using latent dimensions of size 2 and 10.
+For activations between layers of the encoder and the decoder, we used ReLu activations~\cite{nair2010rectified}.
+The activation of our final layer of the decoder is one of sigmoidal, tanh, or linear, depending on how the dataset was scaled.
+When using the custom correlation loss function, we required a stacked dataset, otherwise a flat dataset could be used.
 
-\subsection{Correlated VAEs}
-We have additional information that we can use to perturb our latent space.
-We know what the relative rankings of the different models should be.
-So, instead of just having the typical loss function of an autoencoder: reconstruction loss and KL divergence, we add another term that we call correlation loss.
-We are forced to use pearson correlation loss because we can write that in a differentiable manner.
+\subsection{Correlated VAE}
+The key insight for the correlation loss is that we didn't just want to reduce our dimensionality in an unbiased way--we care about how well it describes real-world data.
+Thus, we can use our additional information to perturb the latent space to better reflect biological reality.
+We know what the relative rankings of the different models should be, so we can add a correlation loss term between the data and the .
+Recall Equation \ref{eqn:vae-loss} that described the VAE loss function.
+We now train with a modified loss function:
+
+\begin{equation}\label{eqn:corr-loss}
+\mathcal{L}(\theta, \phi) = - E[\log p_{\theta}(x_i | z)] + KL(q_{\phi}(z | x_i) || p(z)) + corr(x_i', d)\\
+\end{equation}
+
+where $x_i'$ is the reconstructed data and $d$ is our scaled biological data.
 
 \section{FBA model reduction}
-Finally, now that we have run our models through the Corr-VAE and achieved a latent representation, we need to use the insights we've generated to create better models.
-We can do this in two ways.
-Firstly, we could do this by any time we want to generate new data, we first generate the FBA model using the tool chain described above.
-Then, using the trained autoencoder, we can transform the optimal fluxes and get the shifted optimum and see if that still is better.
-This could be very useful for batch variation.
+Now that we have run our models through our correlational VAE we have a lower dimensional representation of the model.
+We can use this lower dimensional representation to create a better cell-free model.
+One way we could use our system to do this is by running the whole system on each set of new data.
+We first generate the FBA model using the tool chain described above.
+Then, using the trained autoencoder, we can transform the optimal fluxes and get the reconstructed fluxes that better describe a cell-free system.
+This could be very useful for batch variation or comparisons between different labs.
 
-However, it would also be nice to not have to run it through an autoencoder each time.
-Instead, we could use the insights we've gained to actually create a more accurate reduced model.
+However, one of our goals is to build a new cell-free model.
+So we can use the dimensionality reduction from the VAE  to create a more accurate reduced model.
 We do this by thresholding the latent space and removing reactions that have fluxes similar to 0.
-This allows us to create more useful reduced models.
-Now, running these reduced models with the differential conditions gives us a correlation of up to 0.5.
-
-RL agent
-
-\cite{ebrahim2013cobrapy}
+This simple thresholding allows us to identify reactions that are not important in cell-free systems because they do not vary between different runs of our cell-free reactions.
+Section \ref{sec:cmp} shows that these reduced models with the differential conditions give us better explanations of experimental data than full GEMs.
+%RL agent

@@ -58,28 +58,28 @@ This type of model has been applied to the commercial E. coli cell-free system T
 Other work has proposed a general framework to model metabolic networks in cell-free systems using these kinetic models~\cite{wayman2015dynamic}.
 Even more recent work in this field includes using Bayesian parameter inference to infer the kinetic parameters for these reactions in less well studied organisms~\cite{moore2018rapid}.
 
-There have been only a few attempts to use FBA to model cell-free systems.
-The earliest attempt to our knowledge was a 2012 model that attempted to adapt a full-scale E. coli model to a cell-free system~\cite{bujara2012silico}.
-The authors made a series of decisions about parts of the FBA model that did or did not apply for cell-free systems and then pared down the model.
-They then validated this model by examining which reactions could be knocked out in the original E. coli strain to drive production to 0.
-A more recent attempt took a bottom-up approach to building an FBA model for cell-free systems~\cite{vilkhovoy2017sequence}.
+There have only been a few attempts to use metabolic models and FBA to model cell-free systems.
+One model attempted to adapt a full-scale E. coli model to a cell-free system by hand~\cite{bujara2012silico}.
+The authors decided which parts of the full model were relevant for cell-free systems and then removed any irrelevant reactions from the model.
+A more recent attempt took a bottom-up approach to building a FBA model for cell-free systems~\cite{vilkhovoy2017sequence}.
 Instead of removing reactions from the full E. coli GEM until they had a cell-free model, the authors instead selected a few pathways they felt were crucial for a cell-free system.
-Importantly, their model is 'sequence specific', meaning it is tailored to the specific gene product of the cell-free system.
-While both attempts are able to model specific cell-free systems, neither approach is able to construct cell-free systems in a systematic way that could scale to other labs or other organisms.
+They then built a model using only the reactions they had selected as important for protein synthesis.
+%Importantly, their model is 'sequence specific', meaning it is tailored to the specific gene product of the cell-free system.
+These models show that it is possible to use FBA to describe cell-free systems,.
+However, neither approach is able to construct cell-free systems in a systematic way that could scale to other labs or other organisms.
 
 %Hybrid agent-based model for quantitative in-silico cell-free protein synthesis. 2016
 %https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5288458/
 
 \section{Variational autoencoders}
-Autoencoders have been around for many years, but VAEs were introduced only in 2014~\cite{kingma2013auto, rezende2014stochastic}.
+Autoencoders have been around for many years, but VAEs were first introduced only in 2014~\cite{kingma2013auto, rezende2014stochastic}.
 Since their introduction, VAEs have been used for everything from transferring image features~\cite{larsen2015autoencoding} to molecule generation~\cite{gomez2016automatic}.
+Due to their ability to function as generative networks, much of the work in the field has focused on applying VAEs to images.
 VAEs have only just begun making their way into analyzing biological data.
-A recent paper looked at cancer transcriptomics using VAE to extract meaningful features of cancer gene expression~\cite{way2017extracting}.
+Recent work includes using a VAE on cancer transcriptomics data to extract meaningful features of cancer gene expression~\cite{way2017extracting}.
 
 %Also introduced by ~\cite{rezende2014stochastic}
-
-People have begun to apply correlation terms to AEs.
-Correlation Neural Networks were first introduced as a way to make AEs more effective on multi-modal data~\cite{chandar2016correlational}.
+Work has also been done to incorporate correlation terms with AEs.
+Correlation Neural Networks were first introduced as a way to make AEs more effective on multi-modal data such as labeled images~\cite{chandar2016correlational}.
 By maximizing the correlation between the latent representations for each view of the data, the authors were able to improve performance.
-This idea was expanded in Relational Neural Networks, which looks at correlation within the data to affect the AE loss term~\cite{meng2017relational}.
-Still, no one has looked at the correlation within the latent representation and an external experimental data
+This idea has been expanded in Relational Neural Networks, which also looks at correlation within the data to affect the AE loss term~\cite{meng2017relational}.

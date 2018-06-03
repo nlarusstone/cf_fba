@@ -6,12 +6,21 @@ Generating lots of biological data is difficult, but there is a movement towards
 In particular, we showed that a lab robot such as the Labcyte Echo can be used to generate larger scale datasets.
 We encourage future work to take this even further and generate datasets with hundreds or even thousands of starting conditions.
 
+\begin{figure}[t!]
+\begin{center}
+\includegraphics{figs/Vision.pdf}
+\caption{Potential future usage for our system: converting different organism's GEMs into appropriate cell-free models.}
+\end{center}
+\label{fig:vision}
+\end{figure}
+
 \section{Different cell types}
 We have only explored the usage of this technique on a E. coli cell-free model.
 However, there is a lot of work currently ongoing to use non-E. coli cell-free models.
 This system was written with generalizability in mind and should transfer to other organisms as well.
 In particular, this was the intent with creating a reduction system instead of hand-building a model from scratch.
 There are dozens of FBA models of other organisms that this could be applied to.
+Figure \ref{fig:vision} demonstrates our vision as a general purpose system for creating cell-free models.
 
 In particular, the primary author of this work is a part of an Open Plant grant which involves the exploration of using wheat-germ cell-free systems.
 The data is currently being generated through a collaboration with the Earlham Institute.
@@ -37,8 +46,15 @@ They're only as good as they are allowed to be by the reactions that exist.
 FBA models undergo improvements periodically and we're using the most prominent model iJO1366.
 However, as this model is updated, our model can adapt and use more up-to-date reactions.
 
-\section{Improved VAE}
-
+\begin{figure}[t!]
+\begin{center}
+\includegraphics{figs/Applications.pdf}
+\caption{Two future applications of our system.
+Above, multiple experiments can be projected in the same subspace to better compare experimental results.
+Below, the system can help optimize the energetic composition of a cell-free system}
+\end{center}
+\label{fig:apps}
+\end{figure}
 
 \section{Batch variation}
 Batch variation is an important problem facing the cell-free community.
@@ -48,8 +64,9 @@ However, most people need to compare the performance of these variations.
 In order to deal with variation, researchers will perform all of their experiments with a single batch.
 When that batch runs out, though, they will be required to re-characterize and redo all of the experiments they have already done.
 
-We offer two potential solutions with our system.
-First, a researcher could run a calibration set of experiments and then use that to generate a VAE model based on that data.
+Figure \ref{fig:apps} shows how our system provides a potential solution to this issue of batch variation.
+A researcher runs a calibration set of experiments and then use those experiments to generate a VAE model based on that data.
 Then, any future experiments that are performed (either in the same batch or a different one) could be projected into the same latent space in order to allow comparison between the experiments.
-A second solution would involve running a calibration for each batch and then determine the relative vector differences.
-This would allow the translation of all of the data for each batch
+This would allow the translation of all of the data generated into the same subspace and allow better comparisons across batches.
+
+%TODO: conclusion
