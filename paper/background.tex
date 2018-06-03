@@ -22,7 +22,7 @@ Growing up large quantities of cells is relatively cheap, so these types of syst
 The downside to this way of creating CFPS systems is that the exact composition of these cell extracts is unknown and could potentially vary between batches of CFPS systems.
 This motivates our work to provide a system that can accurately model these crude CFPS systems.
 
-\section{FBA}
+\section{Flux Balance Analysis}
 Flux Balance Analysis (FBA) is one of the most common metabolic modeling tools.
 FBA relies on a mathematical representation of all of the metabolic reactions occurring in an organism.
 These reactions can be represented using a matrix S, where each row represents a separate reaction and each column is a metabolite.
@@ -63,7 +63,7 @@ Thus, we can use FBA to analyze this pseudo-steady state and optimize that time 
 A typical FBA model includes thousands of reactions--this is extremely high dimensional data.
 In order to extract insights from the data, we need to use dimensionality reduction techniques.
 
-\section{VAEs}
+\section{Autoencoders}
 Autoencoders are a dimensionality reduction technique with a very simple idea: given a dataset, try to reconstruct that dataset by passing it through a lower dimensional subspace.
 The original idea behind autoencoders was that this lower dimensional representation of the data functioned as a compressed version of the data.
 Instead of hand designing compression/decompression algorithms, these functions can be learned to be application specific.
@@ -103,6 +103,6 @@ We measure loss in this scheme through a combination of two loss terms.
 First, we still care about how well we are able to reconstruct our original data.
 So, we can have a reconstruction loss term which measures how well the reconstructed data maps to the original data.
 Our second loss term constrains the latent space to ensure that it is well formed and provides a regularization term against overfitting.
-We use KL divergence, a common way of measuring difference between probability distributions.
+We use Kullback Leiber (KL) divergence, a common way of measuring difference between probability distributions.
 We can calculate the the KL divergence between our latent space and our prior distribution, which in most cases is a normal distribution.
 With the combination of those two loss terms, we can then train the VAE as we would any other neural network--by using gradient descent to minimize the loss function.
