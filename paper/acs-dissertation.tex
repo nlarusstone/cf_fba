@@ -13,9 +13,16 @@
 \def\authoremail{nl363@cl.cam.ac.uk}
 \def\dissertationtitle{Building a cell-free metabolic model using variational autoencoders}
 \def\wordcount{0}
+\def\ecoli{\textit{E. coli}}
 
 \usepackage{epsfig,graphicx,parskip,setspace,tabularx,xspace} 
 \usepackage{gensymb}
+\usepackage[acronym]{glossaries}
+\usepackage{url}
+
+\makeglossaries
+
+\include{acronyms}
 
 \begin{document}
 
@@ -32,8 +39,12 @@
 \setcounter{page}{0}
 \pagestyle{plain}
 \tableofcontents
-\listoffigures
-\listoftables
+{\listoffigures \let\cleardoublepage\clearpage \listoftables}
+%\listoffigures
+%\listoftables
+\printglossaries
+
+%\let\cleardoublepage\cleardoublepage
 
 \onehalfspacing
 

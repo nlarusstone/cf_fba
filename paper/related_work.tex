@@ -5,81 +5,83 @@ Next, we present a series of automatic reduction systems for metabolic models.
 None of these systems have been applied to modeling cell-free systems, though we present other versions of models.
 Finally, we investigate recent work in the field of variational autoencoders.
 
+%FOCUS ON BIOLOGISTS/USABILITY
+
 \section{Flux Balance Analysis}
 Early metabolic models in the 1980s pioneered the use of stoichiometric equations to describe a biological system and predict the yield of a specific product~\cite{papoutsakis1984equations}.
-This work was soon improved through the use of linear programming (LP) to solve for the optimal result~\cite{fell1986fat}.
-After the transition to using LP solvers, this field was referred to as constraint based analysis, while the primary technique used to solve these equations is called FBA.
-These techniques were soon applied to describe the main metabolic systems in E. coli~\cite{majewski1990simple}.
-Importantly, FBA has repeatedly been shown to predict phenotypes that corresponded to real-world data~\cite{varma1994stoichiometric, edwards2001silico, segre2002analysis, bordbar2014constraint}.
+This work was soon improved through the use of linear programming (\gls{lp}) to solve for the optimal result~\cite{fell1986fat}.
+After the transition to using \gls{lp} solvers, this field was referred to as constraint based analysis, while the primary technique used to solve these equations is called \gls{fba}.
+These techniques were soon applied to describe the main metabolic systems in \gls{ecoli}~\cite{majewski1990simple}.
+Importantly, \gls{fba} has repeatedly been shown to predict phenotypes that corresponded to real-world data~\cite{varma1994stoichiometric, edwards2001silico, segre2002analysis, bordbar2014constraint}.
 
 Improvements on these early models have primarily included the addition of new genes, metabolites, and reactions~\cite{varma1993metabolic}.
-In particular, after the first E. coli genome was sequenced and annotated, the size of these models grew rapidly.
-The earliest genome scale model (GEM) for E. coli was iJE660a, a model that accounted for 627 unique reactions in a typical E. coli cell~\cite{edwards2000escherichia}.
+In particular, after the first \gls{ecoli} genome was sequenced and annotated, the size of these models grew rapidly.
+The earliest genome scale model (\gls{gem}) for \gls{ecoli} was iJE660a, a model that accounted for 627 unique reactions in a typical \gls{ecoli} cell~\cite{edwards2000escherichia}.
 Over the years, more and more reactions were progressively added to the model to better describe the biology.
-This work will use the most recent E. coli GEM, iJO1366 from 2011, which contains 2583 reactions~\cite{orth2011comprehensive}.
+This work will use the most recent \gls{ecoli} \gls{gem}, iJO1366 from 2011, which contains 2583 reactions~\cite{orth2011comprehensive}.
 Since 2011, work in this field has focused on extending metabolic models to incorporate more biological information.
-For instance, recent work has involved the addition of gene expression data to create metabolism and gene expression models (ME-Models)~\cite{lloyd2017cobrame}.
-The most recent ME-model, iJL1678-ME has 79871 reactions.
+For instance, recent work has involved the addition of gene expression data to create metabolism and gene expression models (\glspl{me})~\cite{lloyd2017cobrame}.
+The most recent \gls{me}, iJL1678-ME has 79871 reactions.
 
-%There has also been a sizable amount of research done on extensions to FBA.
+%There has also been a sizable amount of research done on extensions to \gls{fba}.
 %People have added thermodynamic constains 
 
 \section{Reduction of metabolic models}
-As these GEMs begin to incorporate even more information, the issue of high dimensionality arises.
-%One issue with using a full GEM is the extremely high dimensionality due to the fact that every reaction occurring in a cell is detailed.
+As these \glspl{gem} begin to incorporate even more information, the issue of high dimensionality arises.
+%One issue with using a full \gls{gem} is the extremely high dimensionality due to the fact that every reaction occurring in a cell is detailed.
 To deal with this issue, a number of papers have tried to reduced these genome scale models to only the most essential reactions.
 One group has developed multiple tools to reduce the dimensionality of these models.
-redGEM performs a graph search with the objective to minimize information loss to find core metabolic models~\cite{ataman2017redgem}.
+red\gls{gem} performs a graph search with the objective to minimize information loss to find core metabolic models~\cite{ataman2017redgem}.
 Similarly, lumpGem identifies and collapses reaction networks into single balanced reactions in order to reduce the overall dimensionality of the model~\cite{ataman2017lumpgem}.
 The other major tools in this area are NetworkReducer and minNW.
 NetworkReducer iteratively prunes and compresses reaction networks while maintaining a set of protected reactions until a core model is found~\cite{erdrich2015algorithm}.
-minNW uses mixed-integer linear programming (MILP) techniques to compute minimal subnetworks with certain constraints~\cite{rohl2017mixed}.
+minNW uses mixed-integer linear programming (\gls{milp}) techniques to compute minimal subnetworks with certain constraints~\cite{rohl2017mixed}.
 
 All of these methods are searching for minimal core models using only the stoichiometric description of the system.
-However, there has also been work that uses general dimensionality reduction techniques such as Principal Component Analysis (PCA).
-This idea was incorporated into a search technique called Principal Element Mode Analysis (PEMA)~\cite{von2016principal}.
-PEMA searches for subnetworks that maximize the observed variance similar to how the principal components of PCA work.
-More recent methodology called "Principal metabolic flux mode analysis" explicitly incorporates PCA and FBA~\cite{bhadra2017principal}.
-They reduce the dimensionality of the system by running PCA on the stoichiometric matrix while using the concepts from FBA as regularization.
-%Bayesian FBA
-%Network models on FBA
+However, there has also been work that uses general dimensionality reduction techniques such as Principal Component Analysis (\gls{pca}).
+This idea was incorporated into a search technique called Principal Element Mode Analysis (\gls{pema})~\cite{von2016principal}.
+\gls{pema} searches for subnetworks that maximize the observed variance similar to how the principal components of \gls{pca} work.
+More recent methodology called "Principal metabolic flux mode analysis" explicitly incorporates \gls{pca} and \gls{fba}~\cite{bhadra2017principal}.
+They reduce the dimensionality of the system by running \gls{pca} on the stoichiometric matrix while using the concepts from \gls{fba} as regularization.
+%Bayesian \gls{fba}
+%Network models on \gls{fba}
 
 %TODO: Fix up paragraph
-We note that we differ from earlier reduction techniques in a few ways.
+We differ from earlier reduction techniques in a few ways.
 Firstly, none of these techniques have incorporated deep learning methods.
-Next, these techniques all deal with the stoichiometric matrix in the abstract without having actual experimental data to learn from.
-Finally, none of the techniques above have specifically targeted CFPS systems.
+In addition, these techniques all deal with the stoichiometric matrix in the abstract without having actual experimental data to learn from.
+Finally, none of the techniques above have specifically targeted \gls{cfps} systems.
 
 \section{Modeling cell-free systems}\label{rw:mod-cf}
 Models of cell-free systems have typically been based on kinetic models of transcription and translation.
 These models have a narrow focus because they only examine reactions involved in transcription and translation.
 Those reactions can then be described using differential equations with known rate constants to describe the rate of transcription and translation.
-This type of model has been applied to the commercial E. coli cell-free system TXTL, and was able to accurately describe the dynamics of their gene circuit of interest~\cite{tuza2013silico}.
+This type of model has been applied to the commercial \gls{ecoli} cell-free system TXTL, and was able to accurately describe the dynamics of their gene circuit of interest~\cite{tuza2013silico}.
 Other work has proposed a general framework to model metabolic networks in cell-free systems using these kinetic models~\cite{wayman2015dynamic}.
 Even more recent work in this field includes using Bayesian parameter inference to infer the kinetic parameters for these reactions in less well studied organisms~\cite{moore2018rapid}.
 
-There have only been a few attempts to use metabolic models and FBA to model cell-free systems.
-One model attempted to adapt a full-scale E. coli model to a cell-free system by hand~\cite{bujara2012silico}.
+There have only been a few attempts to use metabolic models and \gls{fba} to model cell-free systems.
+One model attempted to adapt a full-scale \gls{ecoli} model to a cell-free system by hand~\cite{bujara2012silico}.
 The authors decided which parts of the full model were relevant for cell-free systems and then removed any irrelevant reactions from the model.
-A more recent attempt took a bottom-up approach to building a FBA model for cell-free systems~\cite{vilkhovoy2017sequence}.
-Instead of removing reactions from the full E. coli GEM until they had a cell-free model, the authors instead selected a few pathways they felt were crucial for a cell-free system.
+A more recent attempt took a bottom-up approach to building a \gls{fba} model for cell-free systems~\cite{vilkhovoy2017sequence}.
+Instead of removing reactions from the full \gls{ecoli} \gls{gem} until they had a cell-free model, the authors instead selected a few pathways they felt were crucial for a cell-free system.
 They then built a model using only the reactions they had selected as important for protein synthesis.
 %Importantly, their model is 'sequence specific', meaning it is tailored to the specific gene product of the cell-free system.
-These models show that it is possible to use FBA to describe cell-free systems,.
+These models show that it is possible to use \gls{fba} to describe cell-free systems,.
 However, neither approach is able to construct cell-free systems in a systematic way that could scale to other labs or other organisms.
 
 %Hybrid agent-based model for quantitative in-silico cell-free protein synthesis. 2016
 %https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5288458/
 
 \section{Variational autoencoders}
-Autoencoders have been around for many years, but VAEs were first introduced only in 2014~\cite{kingma2013auto, rezende2014stochastic}.
-Since their introduction, VAEs have been used for everything from transferring image features~\cite{larsen2015autoencoding} to molecule generation~\cite{gomez2016automatic}.
-Due to their ability to function as generative networks, much of the work in the field has focused on applying VAEs to images.
-VAEs have only just begun making their way into analyzing biological data.
-Recent work includes using a VAE on cancer transcriptomics data to extract meaningful features of cancer gene expression~\cite{way2017extracting}.
+Autoencoders have been around for many years, but \glspl{vae} were first introduced only in 2014~\cite{kingma2013auto, rezende2014stochastic}.
+Since their introduction, \glspl{vae} have been used for everything from transferring image features~\cite{larsen2015autoencoding} to molecule generation~\cite{gomez2016automatic}.
+Due to their ability to function as generative networks, much of the work in the field has focused on applying \glspl{vae} to images.
+\glspl{vae} have only just begun making their way into analyzing biological data.
+Recent work includes using a \gls{vae} on cancer transcriptomics data to extract meaningful features of cancer gene expression~\cite{way2017extracting}.
 
 %Also introduced by ~\cite{rezende2014stochastic}
-Work has also been done to incorporate correlation terms with AEs.
-Correlation Neural Networks were first introduced as a way to make AEs more effective on multi-modal data such as labeled images~\cite{chandar2016correlational}.
+Work has also been done to incorporate correlation terms with \glspl{ae}.
+Correlation Neural Networks were first introduced as a way to make \glspl{ae} more effective on multi-modal data such as labeled images~\cite{chandar2016correlational}.
 By maximizing the correlation between the latent representations for each view of the data, the authors were able to improve performance.
-This idea has been expanded in Relational Neural Networks, which also looks at correlation within the data to affect the AE loss term~\cite{meng2017relational}.
+This idea has been expanded in Relational Neural Networks, which also looks at correlation within the data to affect the \gls{ae} loss term~\cite{meng2017relational}.
