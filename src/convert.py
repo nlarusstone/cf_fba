@@ -1,38 +1,22 @@
-import Bio.PDB.Polypeptide as pdb
-import cobra
-import re
-import utils
-import cf_io
 import argparse
 import difflib
+import os
+import re
+import Bio.PDB.Polypeptide as pdb
+import cobra
+import cf_io
 from constants import varner_to_ijo
-
-parser = argparse.ArgumentParser(description='Create cell free model')
-parser.add_argument('-c', '--conc-final', metavar='c', type=str, help='Path for final concentration file')
-parser.add_argument('-t', '--txtl', dest='txtl', help='Correlation loss', default=False, action='store_true')
-parser.add_argument('--no-txtl', dest='txtl', help='Correlation loss', action='store_false')
-parser.add_argument('-d', '--dataset', type=str, default='nls')
-
-def get_aa_metab(model, aa, cmpt='c'):
-    return model.metabolites.query('{0}__._{1}'.format(aa, cmpt))
-
-def replace_metab(mod, metab):
-    new_id = re.sub(r'_.$', '_c', metab.id)
-    try:
-        cyt = mod.metabolites.get_by_id(new_id)
-    except:
-        cyt = metab
-        cyt.id = new_id
-        cyt.compartment = 'c'
-    return cyt
+import fba_utils as futils
+import utils
 
 def coalesce_cmpts(model):
     mod = model.copy()
     for rxn in mod.reactions:
-        if 'p' in rxn.compartments or 'e' in rxn.compartments:
+        if rxn.compartments != set('c'):
+        #if 'p' in rxn.compartments or 'e' in rxn.compartments:
             #mod.remove_reactions(reactions=[rxn])
             for metab, amt in rxn.metabolites.items():
-                cyt = replace_metab(mod, metab)
+                cyt = futils.replace_metab(mod, metab)
                 rxn.add_metabolites({metab: -1 * amt})
                 rxn.add_metabolites({cyt: amt})
             rxn.comparments = set('c')
@@ -46,38 +30,34 @@ def coalesce_cmpts(model):
     return mod
 
 def strip_exchanges(mod, reactants):
-    # Delete transmembrane transport reactions
     model = mod.copy()
-
     exs = set()
     for metab in reactants:
         if metab == 'trna':
             for trna in model.metabolites.query('trna'):
                 exs = exs.union(trna.reactions.intersection(model.exchanges))
         elif metab.upper() in pdb.aa3:
-            aas = get_aa_metab(model, metab.lower(), cmpt='c')
+            aas = futils.get_aa_metab(model, metab.lower(), cmpt='c')
             for aa in aas:
                 exs = exs.union(aa.reactions.intersection(model.exchanges))
         else:
-            m = model.metabolites.get_by_id('{0}_c'.format(metab))
-            exs = exs.union(m.reactions.intersection(model.exchanges))
+            try:
+                m = model.metabolites.get_by_id('{0}_c'.format(metab))
+                exs = exs.union(m.reactions.intersection(model.exchanges))
+            except:
+                continue
     model.remove_reactions(exs)
-    #['EX_glc_e', 'EX_pi_e', 'EX_mg2_e', 'EX_k_e', 'EX_nh4_e'])
-
-    # As objective function, we selected the exchange reaction which corresponds to the target metabolite 
-    # for which a pathway should be determined.   
     return model
 
 def build_medium(model, cfps_conc):
     mod = model.copy()
-    
     for metab, vals in cfps_conc.iterrows():
         flux = utils.conc_to_flux(vals['final_conc'])
 
         if metab == 'trna':
             ms = model.metabolites.query('trna')
         elif metab.upper() in pdb.aa3:
-            ms = get_aa_metab(model, metab.lower(), cmpt='c')
+            ms = futils.get_aa_metab(model, metab.lower(), cmpt='c')
         else:
             ms = mod.metabolites.query(r'^{0}_c'.format(metab))
         for m in ms:
@@ -130,7 +110,7 @@ def varner_to_cobra(model, metab, metab_ids, varner_to_ijo):
             model.metabolites.add(metab)
     return model.metabolites.get_by_id(metab_name + '_c')
 
-def add_txtl(model, txtl_rxns):
+def add_txtl_rxns(model, txtl_rxns):
     mod = model.copy()
     metab_ids = [m.id.rsplit('_c', 1)[0] for m in mod.metabolites if m.compartment == 'c']
     for rxn in txtl_rxns:
@@ -145,39 +125,56 @@ def add_txtl(model, txtl_rxns):
         mod.add_reaction(rxn)
     return mod
 
-def add_but(model):
-    alc_dehydr = cobra.Reaction(id='ALCDBUT', name='Alcohol dehydrogenase (butanal)', subsystem='c')
-    model.add_reaction(alc_dehydr)
-    alc_dehydr.add_metabolites({'btcoa_c': -1, 'h_c': -1, 'nadh_c': -1, 'nad_c': 1, 'btal_c': 1})
-
-    butanol = cobra.Metabolite(id='btol_c', name='1-butanol', compartment='c', charge=0, formula='C4H9OH')
-    but_synth = cobra.Reaction(id='BUTSYN', name='Butanol synthesis', subsystem='c')
-    model.add_reaction(but_synth)
-    but_synth.add_metabolites({'btal_c': -1, 'h_c': -1, 'nadh_c': -1, 'nad_c': 1, butanol: 1})
-    return model
-
-if __name__ == '__main__':
-    args = parser.parse_args()
-    print args
+def convert_to_cf_model(model_f, add_txtl, obj='BIOMASS_Ec_iJO1366_core_53p95M', cfps_sys='nls', conc_file=None):
     print 'Generate final concentrations'
-    cfps_conc = cf_io.get_conc(cfps_final=args.conc_final)
-    print 'Read in GEM'
-    model = cobra.io.read_sbml_model(filename='../models/iJO1366.xml')
-    if args.txtl:
+    cfps_conc = cf_io.get_conc(cfps_final=conc_file)
+    model_base = model_f.rsplit('/', 1)[1].rsplit('.', 1)[0]
+    print 'Read in GEM: {0}'.format(model_base)
+    if model_f.endswith('json'):
+        model = cobra.io.load_json_model(model_f)
+    else:
+        model = cobra.io.read_sbml_model(filename=model_f)
+
+    if add_txtl:
         print 'Adding TXTL reactions'
-        varner = cobra.io.load_json_model('../models/varner.json')
+        varner = cobra.io.load_json_model('../bio_models/varner.json')
         txtl_rxns = extract_txtl_rxns(varner)
-        model = add_txtl(model, txtl_rxns)
-    if args.dataset == 'karim':
-        model = add_but(model)
-        utils.change_obj(model, model.metabolites.btol_c)
+        model = add_txtl_rxns(model, txtl_rxns)
+
+    if cfps_sys == 'karim':
+        model = utils.add_but(model)
+
     print 'Moving all reactions to same compartment'
     model_cyt = coalesce_cmpts(model)
     print 'Rebuilding medium'
     model_bare = strip_exchanges(model_cyt, cfps_conc.index[:-1])
     model_cf = build_medium(model_bare, cfps_conc)
-    if args.txtl:
-        utils.change_obj(model_cf, model_cf.metabolites.PROTEIN_RFP)
-    print 'Writing out'
-    cobra.io.write_sbml_model(filename='../models/{0}_ecoli_cf_base{1}.sbml'.format(args.dataset, '_txtl' if args.txtl else ''), cobra_model=model_cf)
-    cfps_conc.to_csv(path_or_buf='../data/{0}_concs'.format(args.dataset))
+
+    print 'Updating objective to {0}'.format(obj)
+    try:
+        futils.change_obj(model, metab=obj)
+    except:
+        futils.change_obj(model, rxn=obj)
+
+    cf_model_fname = '../bio_models/{0}/{1}_cf{2}.sbml'.format(cfps_sys, model_base, '_txtl' if add_txtl else '')
+    print 'Writing out cf_model to {0}'.format(cf_model_fname)
+    cobra.io.write_sbml_model(filename=cf_model_fname, cobra_model=model_cf)
+
+    final_concs_fname = '../bio_models/{0}/final_concs.csv'.format(cfps_sys)
+    print 'Writing out CFPS system "{0}" concentrations to {1}'.format(cfps_sys, final_concs_fname)
+    cfps_conc.to_csv(path_or_buf=final_concs_fname)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Create cell free model')
+    parser.add_argument('-c', '--conc-file', metavar='c', type=str, help='Path for final concentration file', default=None)
+    parser.add_argument('-t', '--txtl', dest='txtl', help='Toggle to add txtl reactions', default=False, action='store_true')
+    parser.add_argument('--no-txtl', dest='txtl', help='Toggle to not add txtl reactions', action='store_false')
+    parser.add_argument('-o', '--obj', type=str, default='BIOMASS_Ec_iJO1366_core_53p95M')
+    parser.add_argument('-s', '--sys', type=str, default='nls')
+    parser.add_argument('-m', '--model', type=str, help='Path to model file', default='../bio_models/iJO1366.xml')
+
+    args = parser.parse_args()
+
+    if not os.path.exists('../bio_models/{0}'.format(args.sys)):
+        os.mkdir('../bio_models/{0}'.format(args.sys))
+    convert_to_cf_model(args.model, args.txtl, args.obj, args.sys, args.conc_file)

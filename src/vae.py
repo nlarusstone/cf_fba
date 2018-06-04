@@ -189,7 +189,7 @@ if __name__ == '__main__':
         cbs.append(lh)
     vae.fit(X_train, shuffle='batch', epochs=n_epochs, batch_size=batch_size,
             validation_data=(X_test, None), callbacks=cbs)
-    fname = 'epochs={0}_batch={1}_dimension={2}_corr={3}_scale={4}_froot={5}_txtl={6}_nlayers={7}_resamp={8}.h5'.format(n_epochs, batch_size, latent_dim, use_corr, scale, args.froot, args.txtl, len(layer_szs), args.resamp)
+    fname = 'epochs={0}_batch={1}_dimension={2}_corr={3}_scale={4}_froot={5}_txtl={6}_nlayers={7}_resamp={8}_lastlayer={9}.h5'.format(n_epochs, batch_size, latent_dim, use_corr, scale, args.froot, args.txtl, len(layer_szs), args.resamp, layer_szs[-1])
     vae.save('../models/vae_{0}'.format(fname))
     encoder.save('../models/encoder_{0}'.format(fname))
     generator.save('../models/generator_{0}'.format(fname))

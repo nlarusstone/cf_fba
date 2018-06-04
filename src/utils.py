@@ -1,7 +1,7 @@
+from functools import partial
 import cobra
 import cobra.test
 import numpy as np
-from functools import partial
 
 def convert_cmpts(model, metab, from_cmpt='c', to_cmpt='e'):
     if type(metab) is cobra.Metabolite:
@@ -159,11 +159,6 @@ def get_fluxes(model, row):
         flux = sol.fluxes
     return obj, flux
 
-def change_obj(model, metab):
-    if (not 'DM_{0}'.format(metab.id) in model.reactions):
-	model.add_boundary(metabolite=metab, type='demand')
-    model.objective = model.reactions.get_by_id('DM_{0}'.format(metab.id))
-
 def different_mediums(model1, model2):
     joint_keys = set(model1.medium.keys()).union(set(model2.medium.keys()))
     for key in joint_keys:
@@ -183,3 +178,14 @@ def add_reagents_to_model(model, row):
 
 def get_aa_metab(model, aa, cmpt='c'):
     return model.metabolites.query('{0}__._{1}'.format(aa, cmpt))
+
+def add_but(model):
+    alc_dehydr = cobra.Reaction(id='ALCDBUT', name='Alcohol dehydrogenase (butanal)', subsystem='c')
+    model.add_reaction(alc_dehydr)
+    alc_dehydr.add_metabolites({'btcoa_c': -1, 'h_c': -1, 'nadh_c': -1, 'nad_c': 1, 'btal_c': 1})
+
+    butanol = cobra.Metabolite(id='btol_c', name='1-butanol', compartment='c', charge=0, formula='C4H9OH')
+    but_synth = cobra.Reaction(id='BUTSYN', name='Butanol synthesis', subsystem='c')
+    model.add_reaction(but_synth)
+    but_synth.add_metabolites({'btal_c': -1, 'h_c': -1, 'nadh_c': -1, 'nad_c': 1, butanol: 1})
+    return model

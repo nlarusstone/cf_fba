@@ -36,7 +36,6 @@ if __name__ == '__main__':
         nrg_mix = pd.read_csv('../data/energy_mix.csv', index_col='compound')
     else:
         nrg_mix = None
-    print cfps_conc
 
     print 'Time to generate model specific conditions'
     model = cobra.io.read_sbml_model('../models/{0}'.format(model_f))
@@ -52,6 +51,8 @@ if __name__ == '__main__':
         else:
             exp_concs = fs.conc_dilution(cfps_conc_tmp['start_conc'], (rxn_amt / 5.0) * cfps_conc_tmp['amt'], tot_rxn_amt)
         model_i = fs.change_conc(model, exp_concs)
+        model_f_l = model_f.rsplit('.', 1)
+        cobra.io.write_sbml_model(filename='../models/{0}/{1}'.format(args.froot, model_f_l[0] + '_' + str(idx) + '.' + model_f_l[1]), cobra_model=model_i)
         #print model_i.reactions.EX_mg2_c.bounds
         #print model_i.reactions.EX_pi_c.bounds
         sol = model_i.optimize()

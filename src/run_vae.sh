@@ -5,10 +5,12 @@ froots=('echo' 'hand' 'karim')
 latents=(2 10)
 #froots=('echo')
 #latents=(2)
-layers1=(1024 512 256)
-layers2=(1024 256)
+layers1=(1024 1024 1024)
+#layers1=(1024 512 256)
+#layers2=(1024 256)
 typeset -A layers
-layers=([l1]="${layers1[@]}" [l2]="${layers2[@]}")
+layers=([l1]="${layers1[@]}")
+# [l2]="${layers2[@]}")
 # 'exp')
 #for sc in "${scale[@]}"; do
 #	for dirc in "${direction[@]}"; do
