@@ -9,7 +9,7 @@ Finally, we investigate recent work in the field of variational autoencoders.
 
 \section{Flux Balance Analysis}
 Early metabolic models in the 1980s pioneered the use of stoichiometric equations to describe a biological system and predict the yield of a specific product~\cite{papoutsakis1984equations}.
-This work was soon improved through the use of linear programming (\gls{lp}) to solve for the optimal result~\cite{fell1986fat}.
+This work was soon improved through the use of \gls{lp} to solve for the optimal result~\cite{fell1986fat}.
 After the transition to using \gls{lp} solvers, this field was referred to as constraint based analysis, while the primary technique used to solve these equations is called \gls{fba}.
 These techniques were soon applied to describe the main metabolic systems in \gls{ecoli}~\cite{majewski1990simple}.
 Importantly, \gls{fba} has repeatedly been shown to predict phenotypes that corresponded to real-world data~\cite{varma1994stoichiometric, edwards2001silico, segre2002analysis, bordbar2014constraint}.
@@ -20,7 +20,7 @@ The earliest genome scale model (\gls{gem}) for \gls{ecoli} was iJE660a, a model
 Over the years, more and more reactions were progressively added to the model to better describe the biology.
 This work will use the most recent \gls{ecoli} \gls{gem}, iJO1366 from 2011, which contains 2583 reactions~\cite{orth2011comprehensive}.
 Since 2011, work in this field has focused on extending metabolic models to incorporate more biological information.
-For instance, recent work has involved the addition of gene expression data to create metabolism and gene expression models (\glspl{me})~\cite{lloyd2017cobrame}.
+For instance, recent work has involved the addition of gene expression data to create \glspl{me}~\cite{lloyd2017cobrame}.
 The most recent \gls{me}, iJL1678-ME has 79871 reactions.
 
 %There has also been a sizable amount of research done on extensions to \gls{fba}.
@@ -35,14 +35,18 @@ red\gls{gem} performs a graph search with the objective to minimize information 
 Similarly, lumpGem identifies and collapses reaction networks into single balanced reactions in order to reduce the overall dimensionality of the model~\cite{ataman2017lumpgem}.
 The other major tools in this area are NetworkReducer and minNW.
 NetworkReducer iteratively prunes and compresses reaction networks while maintaining a set of protected reactions until a core model is found~\cite{erdrich2015algorithm}.
-minNW uses mixed-integer linear programming (\gls{milp}) techniques to compute minimal subnetworks with certain constraints~\cite{rohl2017mixed}.
+minNW uses \gls{milp} techniques to compute minimal subnetworks with certain constraints~\cite{rohl2017mixed}.
 
 All of these methods are searching for minimal core models using only the stoichiometric description of the system.
-However, there has also been work that uses general dimensionality reduction techniques such as Principal Component Analysis (\gls{pca}).
-This idea was incorporated into a search technique called Principal Element Mode Analysis (\gls{pema})~\cite{von2016principal}.
+However, there has also been work that uses general dimensionality reduction techniques such as \gls{pca}.
+This idea was incorporated into a search technique called\gls{pema}~\cite{von2016principal}.
 \gls{pema} searches for subnetworks that maximize the observed variance similar to how the principal components of \gls{pca} work.
 More recent methodology called "Principal metabolic flux mode analysis" explicitly incorporates \gls{pca} and \gls{fba}~\cite{bhadra2017principal}.
 They reduce the dimensionality of the system by running \gls{pca} on the stoichiometric matrix while using the concepts from \gls{fba} as regularization.
+
+%TODO: add reference to https://www.cell.com/cell-systems/pdf/S2405-4712(17)30010-8.pdf
+% CITE Network-based analysis of metabolic regulation in the human red blood cell
+% CITE  new constraint-based description of the steady-state flux cone of metabolic networks
 %Bayesian \gls{fba}
 %Network models on \gls{fba}
 
