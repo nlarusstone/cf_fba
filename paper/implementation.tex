@@ -16,7 +16,7 @@ The full experimental protocol can be found at dx.doi.org/10.17504/protocols.io.
 \subsection{Cell-free systems}
 As shown in Fig \ref{fig:cfps}, creating a cell-free protein expression system involves three main steps: growing and lysing cells, supplementing with energy substrates, and adding custom \gls{dna} constructs.
 Our protocol is based off of the open protocol out of the Federici lab \cite{medina2017cfps}.
-We begin by growing up 1L of BL21 \ecoli cells in an overnight culture of \gls{lb} until they have reached optical density (\gls{od}) of 1.6.
+We begin by growing up 1L of BL21 \ecoli cells in an overnight culture of \gls{lb} until they have reached \gls{od} of 1.6.
 Then, we spin down the cells and remove the supernatant, storing the pellet in the refrigerator overnight if necessary.
 Next, we perform 3 more sets of spins and washes with S30 buffers to remove any extracellular debris.
 Finally, we use a bead beater to lyse the cells and spin one last time to remove the cellular debris and beads.
@@ -187,7 +187,7 @@ Clearly, we can see that increasing the number of samples leads to a more normal
 
 Each model has different experimental conditions and therefore has slightly different flux distributions for each reaction.
 So, after we generate flux samples for each model, we can combine the sampled fluxes to generate two new datasets.
-One dataset is flat--meaning we simply concatenate all of the sampled fluxes into a dataset of size $2000E x R$ where $E$ is the number of experiments and $R$ is the number of reactions.
+One dataset is flat---meaning we simply concatenate all of the sampled fluxes into a dataset of size $2000E x R$ where $E$ is the number of experiments and $R$ is the number of reactions.
 This dataset is useful to investigate the fluxes and see if we can perform dimensionality reduction to gain insights on the fluxes in our models in general.
 The other dataset we can make involves sampling with replacement from the fluxes of each model and then stacking the fluxes to create a new dataset.
 This dataset has size $N x E x R$ where N is the number of samples with replacement we drew.
@@ -208,7 +208,7 @@ The activation of our final layer of the decoder is one of sigmoidal, tanh, or l
 When using the custom correlation loss function, we required a stacked dataset, otherwise a flat dataset could be used.
 
 \subsection{Correlated \gls{vae}}
-The key insight for the correlation loss is that we did not just want to reduce our dimensionality in an unbiased way--we care about how well it describes real-world data.
+The key insight for the correlation loss is that we did not just want to reduce our dimensionality in an unbiased way---we care about how well it describes real-world data.
 Thus, we can use our additional information to perturb the latent space to better reflect biological reality.
 We know what the relative rankings of the different models should be, so we can add a correlation loss term between the experimental data and the latent representation.
 Recall Equation \ref{eqn:vae-loss} that described the \gls{vae} loss function.

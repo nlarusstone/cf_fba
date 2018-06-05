@@ -31,6 +31,8 @@ After the data generation is done, we want to apply this to that data to see its
 %TODO explain
 Additionally, this system will get a web interface to encourage other biologists to use it for their own data.
 
+%TODO: talk about https://www.cell.com/cell-systems/pdf/S2405-4712(17)30010-8.pdf
+
 \section{RL system for reduction}
 One thing that we noticed while thinking about the best way to reduce the model is that we could frame the problem in terms of a reinforcement learning problem.
 We originally tried to determine which reactions to remove by hand.
@@ -73,4 +75,8 @@ A researcher runs a calibration set of experiments and then use those experiment
 Then, any future experiments that are performed (either in the same batch or a different one) could be projected into the same latent space in order to allow comparison between the experiments.
 This would allow the translation of all of the data generated into the same subspace and allow better comparisons across batches.
 
-%TODO: conclusion
+%TODO: fix conclusion
+In conclusion, we have shown that deep learning techniques can be successfully applied to biology.
+In particular, computational biologists should start using \glspl{ae} (especially \glspl{vae}) for dimensionality reduction instead of automatically defaulting to using \gls{pca}.
+The loss function that we developed for our \gls{vae} is general enough to be used with any form of biological data.
+We hope this work encourages other computational biologists to continue work integrating deep learning with biology in general and metabolic models specifically.
