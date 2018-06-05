@@ -1,7 +1,10 @@
 from functools import partial
+import Bio.SeqUtils as su
 import cobra
 import cobra.test
 import numpy as np
+from sklearn.preprocessing import maxabs_scale, minmax_scale, normalize, scale, robust_scale
+from sklearn.model_selection import train_test_split
 
 def convert_cmpts(model, metab, from_cmpt='c', to_cmpt='e'):
     if type(metab) is cobra.Metabolite:
@@ -54,20 +57,6 @@ def add_exchange(model, metab_dict, additive=False):
         #print model.reactions.get_by_id(rxn_nm).upper_bound
     return rxn_dict
 
-# Based on MetaboTools
-# flux = metConc/(cellConc*cellWeight*t*1000);
-# cellConc: 10 mg/ml
-# cellWeight: 500 * (10 ** -11)
-# t = 24
-# t: Experiment duration
-def conc_to_flux(metab_conc, t=24):
-    # Taken from MetaboTools, units are gDW/cell
-    #cell_weight = 500 * (10 ** -11)
-    # We have 10 mg/ml
-    # need cells / ml
-    cell_conc = 10 * (1/ 1000.0) #* (1 / cell_weight)
-    flux = metab_conc / (cell_conc * t * 1000.0)
-    return flux * 100
 
 def build_medium(mod):
     model = mod.copy()
@@ -176,9 +165,6 @@ def add_reagents_to_model(model, row):
     rxn = add_exchange(mod, metab_dict, additive=True)
     return mod
 
-def get_aa_metab(model, aa, cmpt='c'):
-    return model.metabolites.query('{0}__._{1}'.format(aa, cmpt))
-
 def add_but(model):
     alc_dehydr = cobra.Reaction(id='ALCDBUT', name='Alcohol dehydrogenase (butanal)', subsystem='c')
     model.add_reaction(alc_dehydr)
@@ -189,3 +175,97 @@ def add_but(model):
     model.add_reaction(but_synth)
     but_synth.add_metabolites({'btal_c': -1, 'h_c': -1, 'nadh_c': -1, 'nad_c': 1, butanol: 1})
     return model
+
+# amt in g, vol in mL, mw in g/mol
+def calc_conc(amt, vol, mw=None, seq=None, seq_type=None):
+    # seq can be DNA or protein or an amino acid
+    if seq:
+        mw = su.molecular_weight(seq, seq_type)
+    elif not mw:
+        raise Exception('Need a molecular weight for non-DNA')
+    conc = (amt * 1000) / (vol * mw)
+    # returns Molar concentrations
+    return conc
+
+def conc_dilution(start_conc, vol_add, tot_vol):
+    return start_conc * (vol_add / tot_vol)
+
+def scale_data(data, scale_type, in_place=True):
+    if not in_place:
+        scaled_data = data.copy()
+    else:
+        scaled_data = data
+    if 'norm' in scale_type:
+        scale_func = scale
+    elif 'robust' in scale_type:
+        scale_func = robust_scale
+    elif 'maxabs' in scale_type:
+        scale_func = maxabs_scale
+    elif 'negone' in scale_type:
+        scale_func = partial(minmax_scale, feature_range=(-1, 1))
+    else:
+        scale_func = minmax_scale
+    if len(data.shape) < 3:
+        print len(data.shape)
+        scaled_data = scale_func(scaled_data, copy=(not in_place))
+    else:
+        if 'flux' in scale_type:
+            for i in range(data.shape[2]):
+                    scaled_data[:, :, i] = scale_func(scaled_data[:, :, i])
+        elif 'exp' in scale_type:
+            for i in range(data.shape[1]):
+                    scaled_data[:, i, :] = scale_func(scaled_data[:, i, :])
+        else:
+            raise('No scale direction')
+    
+    if not in_place:
+        return scaled_data
+
+def resample(data, n_rows, n_experiments, n_rxns):
+    resamp_data = np.empty((n_rows, n_experiments, n_rxns))
+    for j in range(n_rows):
+        inds = np.random.choice(range(data.shape[0]), size=n_experiments, replace=True)
+        for i in range(n_experiments):
+            ind = inds[i]
+            flxs = data[ind, i, :]
+            resamp_data[j][i][:] = flxs
+        if j % (n_rows / 10) == 0:
+            print j
+    print 'done'
+    return resamp_data
+
+def biased_resample(sorted_samp_data, n_rows=2000):
+    #sorted_samp_data = samp_data_scaled.copy()
+    #for i in range(n_experiments):
+    #    exp = samp_data_scaled[:, i, :]
+    #    sorted_samp_data[:, i, :] = samp_data_scaled[exp[:,btol_col].argsort(), i, :]
+    np.random.seed(42)
+    resamp_data = np.empty((n_rows, n_experiments, max_sz[0]))
+    for j in range(n_rows):
+        #exps = []
+        btol_val = 0
+        for i in range(n_experiments):
+            inds = (sorted_samp_data[:, i, btol_col] >= btol_val).nonzero()[0]
+            if inds.any():
+                ind = np.random.choice(inds[:5], size=1, replace=True)[0]
+            else:
+                ind = np.argmax(sorted_samp_data[:, i, btol_col])
+            btol_val = sorted_samp_data[ind, i, btol_col]
+            #exps.append(btol_val)
+            flxs = sorted_samp_data[ind, i, :]
+            resamp_data[j][i][:] = flxs
+        #print scipy.stats.pearsonr(exps, df['AVG.1'])
+        if j % (n_rows / 10) == 0:
+            print j
+    print 'done'
+    return resamp_data
+
+def gen_train_test(data, y=None):
+    #train_ind = np.random.choice(data.shape[0], size=int(0.9 * data.shape[0]), replace=False)
+    #test_ind = list(set(range(data.shape[0])) - set(train_ind))
+    #y = np.array(range(41) * data.shape[0])
+    if not y is None:
+        return train_test_split(data, y, random_state=42)
+    else:
+        return train_test_split(data, random_state=42)
+
