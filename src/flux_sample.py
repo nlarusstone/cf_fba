@@ -1,83 +1,23 @@
-import pandas as pd
-import numpy as np
-from cobra.flux_analysis import sample
-import multiprocessing
-import cobra
-import utils
-import Bio.PDB.Polypeptide as pdb
-import Bio.SeqUtils as su
 import argparse
+import multiprocessing
+import Bio.PDB.Polypeptide as pdb
+import cobra
+from cobra.flux_analysis import sample
+import numpy as np
+import pandas as pd
+import cf_io
+import fba_utils as futils
 
 parser = argparse.ArgumentParser(description='Sample fluxes from different CF models')
-parser.add_argument('-s', '--samps', metavar='s', type=int, help='Number of samples', default=200)
+parser.add_argument('-s', '--samps', metavar='s', type=int, help='Number of samples, set to 0 if you want to generate models without sampling', default=0)
 parser.add_argument('-d', '--dataset', type=str, default='nls')
-parser.add_argument('-f', '--froot', type=str, default='hand')
+parser.add_argument('-f', '--froot', type=str, default='manual')
+parser.add_argument('-m', '--model', type=str, default='iJO1366')
 parser.add_argument('-r', '--rxn', type=int, default=5, help='Amount in uL for a reaction')
 parser.add_argument('-a', '--addl', type=float, default=1, help='Additional amount of reactants added')
 parser.add_argument('-b', '--batch_size', type=int, default=50, help='Total amount of liquid in uL in a batch')
-
-def get_aa_metab(model, aa, cmpt='c'):
-    return model.metabolites.query('{0}__._{1}'.format(aa, cmpt))
-
-def change_conc(model, cfps_conc):
-    mod = model.copy()
-    
-    for metab, vals in cfps_conc.iteritems():
-        flux = utils.conc_to_flux(vals)
-
-        if metab == 'trna':
-            ms = model.metabolites.query('trna')
-        elif metab.upper() in pdb.aa3:
-            ms = get_aa_metab(model, metab.lower(), cmpt='c')
-        else:
-            ms = mod.metabolites.query(r'^{0}_c'.format(metab))
-        for m in ms:
-            rxn_nm = 'EX_' + m.id
-            rxn = mod.reactions.get_by_id(rxn_nm)
-            rxn.lower_bound = -1 * flux
-            rxn.upper_bound = flux
-            #mod.add_boundary(metabolite=m, type='exchange', lb=0, ub=flux)
-            #mod.add_boundary(metabolite=m, type='cfps-medium', reaction_id=rxn_nm, lb=0, ub=flux) 
-    return mod
-
-def conc_dilution(start_conc, vol_add, tot_vol):
-    return start_conc * (vol_add / tot_vol)
-
-def get_exp_data(froot):
-    # '../data/17_5_18_T7_mRFP_NLS.CSV'
-    if froot == 'karim':
-        df = pd.read_csv('../data/{0}_data.CSV'.format(froot))
-        conds_norm = df
-        conds_norm['OUT'] = conds_norm['AVG.1'] / conds_norm['AVG.1'].max()
-        conds_norm.drop(columns=['AVG', 'STD', 'AVG.1', 'STD.1', 'Area_1', 'Area_2', 'Conc_1', 'Conc_2'], inplace=True)
-    else:
-        df = pd.read_csv('../data/{0}_data.CSV'.format(froot), skiprows=6)
-        print df.shape
-        gain_diff = df.shape[0] / 5
-        times = df["Unnamed: 1"]
-        df.drop('Unnamed: 1', inplace=True, axis=1)
-        # Bad data
-        if froot == 'hand':
-            df.drop('E09', inplace=True, axis=1)
-        # Remove negative control
-        df.drop(df.columns[-2:], inplace=True, axis=1)
-        
-        gain2 = gain_diff
-        outs = df[gain2:gain2+gain_diff - 1].mean(axis=0)
-        # '../data/17_5_18_exp_conditions.csv'
-        conds = pd.read_csv('../data/{0}_exp_conditions.csv'.format(froot))
-        if froot == 'hand':
-            conds.drop(conds.shape[0] - 1, inplace=True)
-            conds_full = conds.reindex(np.repeat(conds.index.values, 2)).reset_index()
-            conds_full = conds_full.drop(32).reset_index(drop=True)
-        else:
-            conds_full = conds.reindex(np.repeat(conds.index.values, 2)).reset_index()
-        conds_full['OUT'] = outs.reset_index(drop=True)
-        conds_avg = conds_full.groupby('index').mean()
-        conds_norm = conds_avg
-        conds_norm['OUT'] = conds_norm['OUT'] / conds_norm['OUT'].max()
-    conds_norm.to_csv('../data/{0}_EXPERIMENT.csv'.format(froot))
-    return conds_norm
+parser.add_argument('-t', '--txtl', dest='txtl', help='Toggle to add txtl reactions', default=False, action='store_true')
+parser.add_argument('--no-txtl', dest='txtl', help='Toggle to not add txtl reactions', action='store_false')
 
 def update_vals(cfps_conc_tmp, row, n_batches, nrg_mix=None, replace=False):
     for col in row.index[:-1]:
@@ -100,18 +40,13 @@ def update_vals(cfps_conc_tmp, row, n_batches, nrg_mix=None, replace=False):
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    flux_sz = args.samps
     rxn_amt = args.rxn
     addl_amt = args.addl
     batch_size = args.batch_size
     n_batches = batch_size / rxn_amt
-    l_txtl = ['']
-    if not args.froot == 'karim':
-        l_txtl.append('_txtl')
-    models = ['{0}_ecoli_cf_base{1}.sbml'.format(args.dataset, txtl) for txtl in l_txtl]
 
     print 'Read in data'
-    df = get_exp_data(args.froot)
+    df = cf_io.get_exp_data(args.froot)
     #df.drop(columns=['Area_1', 'Area_2', 'Conc_1', 'Conc_2'], inplace=True)
 
     cfps_conc = pd.read_csv('../data/{0}_concs'.format(args.dataset), index_col='compound')
@@ -121,20 +56,24 @@ if __name__ == '__main__':
     else:
         nrg_mix = None
 
-    print 'Time to generate model specific conditions'
-    for model_f in models:
-        model = cobra.io.read_sbml_model('../models/{0}'.format(model_f))
-        print 'Model {0} read in'.format(model_f)
-        for idx, row in df.iterrows():
-            print idx
-            cfps_conc_tmp = cfps_conc.copy()
-            cfps_conc_tmp = update_vals(cfps_conc_tmp, row, n_batches, nrg_mix=nrg_mix, replace=args.froot == 'karim')
-            tot_rxn_amt = rxn_amt + addl_amt
-            if args.froot == 'karim':
-                exp_concs = cfps_conc_tmp['final_conc']
-            else:
-                exp_concs = conc_dilution(cfps_conc_tmp['start_conc'], (rxn_amt / 5.0) * cfps_conc_tmp['amt'], tot_rxn_amt)
-            model_i = change_conc(model, exp_concs)
-            print model_i.medium
-            samples_i = sample(model_i, flux_sz, processes=multiprocessing.cpu_count() - 1)
-            samples_i.to_csv('../data/f{2}/{3}_{0}_fluxes_{1}'.format(model_f, idx, flux_sz, args.froot))
+    print 'Generate model specific conditions'
+    model_f_base = '{0}_cf{1}.sbml'.format(args.model, '_txtl' if args.txtl else '')
+    model_f = '../bio_models/{0}/{1}'.format(args.dataset, model_f_base)
+    model = cobra.io.read_sbml_model(model_f)
+    print 'Model {0} read in'.format(model_f)
+    for idx, row in df.iterrows():
+        print idx
+        cfps_conc_tmp = cfps_conc.copy()
+        cfps_conc_tmp = update_vals(cfps_conc_tmp, row, n_batches, nrg_mix=nrg_mix, replace=args.froot == 'karim')
+        tot_rxn_amt = rxn_amt + addl_amt
+        if args.froot == 'karim':
+            exp_concs = cfps_conc_tmp['final_conc']
+        else:
+            exp_concs = utils.conc_dilution(cfps_conc_tmp['start_conc'], (rxn_amt / 5.0) * cfps_conc_tmp['amt'], tot_rxn_amt)
+        model_i = change_conc(model, exp_concs)
+        model_f_base = model_f.rsplit('.', 1)[0]
+        cobra.io.write_sbml_model(filename='../bio_models/{0}/{1}/{2}'.format(args.dataset, args.froot, model_f_base + '_' + str(idx) + '.sbml'), cobra_model=model_i)
+        print model_i.medium
+        if args.samps > 0:
+            samples_i = sample(model_i, args.samps, processes=multiprocessing.cpu_count() - 1)
+            samples_i.to_csv('../data/f{0}/{1}/{2}/{3}_fluxes_{4}'.format(args.samps, args.dataset, args.froot, model_f_base, idx)

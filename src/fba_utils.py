@@ -1,4 +1,5 @@
 import re
+import Bio.PDB.Polypeptide as pdb
 import cobra
 
 def get_aa_metab(model, aa, cmpt='c'):
@@ -33,3 +34,39 @@ def change_obj(model, metab=None, rxn=None):
     else:
         print 'Need to specify either a metabolite or reaction as an objective'
         raise Exception
+
+def change_conc(model, cfps_conc):
+    mod = model.copy()
+    
+    for metab, vals in cfps_conc.iteritems():
+        flux = conc_to_flux(vals)
+
+        if metab == 'trna':
+            ms = model.metabolites.query('trna')
+        elif metab.upper() in pdb.aa3:
+            ms = get_aa_metab(model, metab.lower(), cmpt='c')
+        else:
+            ms = mod.metabolites.query(r'^{0}_c'.format(metab))
+        for m in ms:
+            rxn_nm = 'EX_' + m.id
+            rxn = mod.reactions.get_by_id(rxn_nm)
+            rxn.lower_bound = -1 * flux
+            rxn.upper_bound = flux
+            #mod.add_boundary(metabolite=m, type='exchange', lb=0, ub=flux)
+            #mod.add_boundary(metabolite=m, type='cfps-medium', reaction_id=rxn_nm, lb=0, ub=flux) 
+    return mod
+
+# Based on MetaboTools
+# flux = metConc/(cellConc*cellWeight*t*1000);
+# cellConc: 10 mg/ml
+# cellWeight: 500 * (10 ** -11)
+# t = 24
+# t: Experiment duration
+def conc_to_flux(metab_conc, t=24):
+    # Taken from MetaboTools, units are gDW/cell
+    #cell_weight = 500 * (10 ** -11)
+    # We have 10 mg/ml
+    # need cells / ml
+    cell_conc = 10 * (1/ 1000.0) #* (1 / cell_weight)
+    flux = metab_conc / (cell_conc * t * 1000.0)
+    return flux * 100
