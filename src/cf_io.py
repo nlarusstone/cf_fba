@@ -67,6 +67,7 @@ def get_exp_data(froot):
         conds_avg = conds_full.groupby('index').mean()
         conds_norm = conds_avg
         conds_norm['OUT'] = conds_norm['OUT'] / conds_norm['OUT'].max()
+        conds_norm.drop('level_0', axis=1, inplace=True)
     conds_norm.to_csv('../data/{0}_EXPERIMENT.csv'.format(froot))
     return conds_norm
 
