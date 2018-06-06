@@ -1,4 +1,6 @@
+from matplotlib import cm
 import matplotlib.pyplot as plt
+import numpy as np
 import cf_io
 
 def plt_stds(rxns, stds, recon):
@@ -23,17 +25,22 @@ def plt_noise_corr(noise_data, orig_corr, ndim=2):
     plt.show()
 
 def plt_latent_space(encoded_data, df, ax, y_test=None, flat=False, dim_1=0, dim_2=1, samp_range=None,
-                     color_scheme='tab20', sz=60, legend=True):
-    df_sor = df.sort_values(by='nts')
+                     color_scheme='tab20', sz=60, legend=True, label='Dimension'):
+    if ax is None:
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
+        legend = True
+    df_sor = df.sort_values(by='OUT')
     n_experiments = df.shape[0]
     ind = df_sor.index
-    cmap = cm.get_cmap(color_scheme, 17)
+    cmap = cm.get_cmap(color_scheme, n_experiments)
 
-    if samp_range:
-        low, high = samp_range
-        encoded_data = encoded_data[low:high]
+    if samp_range is not None:
+        #low, high = samp_range
+        if type(samp_range) == int:
+            samp_range = range(samp_range)
+        encoded_data = encoded_data[samp_range]
         if y_test is not None:
-            y_test = y_test[low:high]
+            y_test = y_test[samp_range]
     if flat:
         colors = y_test
         d_1 = encoded_data[:, dim_1]
@@ -53,16 +60,17 @@ def plt_latent_space(encoded_data, df, ax, y_test=None, flat=False, dim_1=0, dim
     ax.set_ylim((ymin - y_diff, ymax + y_diff))
     if legend:
         lp = lambda k: ax.plot([],color=sc.cmap(sc.norm(k)), ms=np.sqrt(sz), mec="none",
-                                label='Sugar: {0}, Phosphate: {1}, NTs: {2}, Potassium: {3}'.format(
-                                    df_sor.iloc[k, 0], df_sor.iloc[k, 1], df_sor.iloc[k, 2], df_sor.iloc[k, 3]), 
+                                label=' '.join([col + ': {0}'.format(df_sor.iloc[k, col_i]) for col_i, col in enumerate(df_sor.columns[:-1])]),
+#'Sugar: {0}, Phosphate: {1}, NTs: {2}, Potassium: {3}'.format(
+#                                    df_sor.iloc[k, 0], df_sor.iloc[k, 1], df_sor.iloc[k, 2], df_sor.iloc[k, 3]), 
                                 ls="", marker="o")[0]
-        handles = [lp(k) for k in np.unique(range(17))]
+        handles = [lp(k) for k in np.unique(range(n_experiments))]
         ax.legend(bbox_to_anchor=(1.1, 1.0))#handles=handles, 
-    ax.set_xlabel('Dimension {0}'.format(dim_1))
-    ax.set_ylabel('Dimension {0}'.format(dim_2))
+    ax.set_xlabel('{0} {1}'.format(label, dim_1))
+    ax.set_ylabel('{0} {1}'.format(label, dim_2))
 
 def compare_flat_stacked(df, test_enc, test_enc_f, y_test_f):
-    axarr = plt.subplots(nrows=1, ncols=2, figsize=(14, 8))[1]
+    fig, axarr = plt.subplots(nrows=1, ncols=2, figsize=(14, 8))
     plt_latent_space(test_enc_f, df, axarr[0], flat=True, y_test=y_test_f, samp_range=(0, 1000), legend=False)
     axarr[0].set_title('VAE latent space')
     plt_latent_space(test_enc, df, axarr[1], samp_range=(0, 1000), legend=True)
