@@ -2,91 +2,118 @@
 \pagenumbering{arabic} 
 \setcounter{page}{1} 
 
+%TODO name our system
+
 Despite more than a century of active biology research, many biological systems lack good computational models.
-Computational models are only useful if they accurately represent how the underlying biological system behaves.
+Computational models are useful if they accurately capture how the underlying biological system behaves.
 When these models are faithful to the underlying biology, experiments can be run \textit{in silico} instead of \textit{in vivo}, speeding up the pace of research.
 %A good model should also be consistent---running it multiple times should produce the same results.
 %Though biological experiments can have wide variance due to external conditions, we want our model to vary only due to intrinsic biological sources of variation.
 %Exact reproducibility is very difficult in laboratory environments, but a computer model can and should eliminate the extrinsic sources of variance that one encounters in a laboratory setting.
-The best computational models are useful not only as biology simulators, but also as facilitators of new hypotheses.
-Computational biology models should both help researchers improve their understanding of the modeled system and surface novel insights into the underlying biology.
+Moreover, the best computational models are useful not only as biology simulators, but also as facilitators of new hypotheses.
+Computational biology models should both help researchers improve their understanding of the modeled system and expose novel insights into the underlying biology.
 
 %TODO: maybe remove?
 %Recent efforts to model biological systems have become ever more accurate as the amount of biological data collected increases.
-Biological systems are complex and can be examined at many different levels.
+Biological systems are complex and can be examined at various levels of abstraction.
 For example, one model could use a physical description of a cell to predict its shape as it grows.
 A different model could use -omic data---genomic, transcriptomic, and metabolomic measurements---to model the production of compounds that allow for cellular growth.
-We will focus on modeling the metabolism of a biological system.
+Our efforts focus on modeling the metabolism of a biological system to help biologists better understand what reactions are occurring in that system.
 %As all models are inherently limited in some way, so the choice of the type of model that is used to describe a system is extremely important.
 
-The goal of this dissertation is to provide a model for biologists to better understand what is occurring in cell-free systems.
-This dissertation details an end-to-end system that produces metabolic models for cell-free systems based on experimental data.
-Our system learns which reactions are most important for a given cell-free system and produce a reduced metabolic model that fits with the experimental data.
+Our goal is to provide a metabolic model of a \gls{cfps} system that is useful for biologists working with \gls{cfps} systems.
+This dissertation details an end-to-end system that produces metabolic models for \gls{cfps} systems from experimental data.
+Our system learns which reactions are most important for a given cell-free system and produces a reduced metabolic model that fits the experimental data.
 We utilize a Variational Autoencoder (\gls{vae}) on top of a common metabolic modeling technique called Flux Balance Analysis (\gls{fba}) to produce these reduced models.
-In particular, we introduce a new loss function for the \gls{vae} that allows us to effectively reduce the dimensionality of the model based on our experimental data.
-We hope that our system will be used by biologists to better understand how different starting conditions might affect their experiments, cope with batch variation, and gain a deeper understand of the composition of cell-free systems.
+In particular, we introduce a new loss function based on correlation with experimental data for our \gls{vae}.
+We call this new model a Corr-VAE.
+The Corr-VAE perturbs the latent space of a \gls{vae} to better fit our experimental data.
+Our system can be used by biologists to navigate the parameter space of different starting conditions, cope with batch variation, and gain a deeper understand of the composition of cell-free systems.
+
+\begin{figure}[t!]
+\begin{center}
+\includegraphics[width=\textwidth]{figs/FBA_Amplifier.pdf}
+\end{center}
+\caption[High-level idea behind our system]{High-level idea behind our system.
+Small changes in the parameter space are amplified across many different fluxes in a \gls{fba} model.
+We used a \gls{vae} to understand how the changes in the fluxes reflect the changes in the parameter space. 
+}
+\label{fig:fba_amp}
+\end{figure}
 
 \textbf{Metabolic models}
 
 %TODO: fix this paragraph--why is it relevant/here?
 Metabolism is defined as all of the chemical reactions that occur within an entity---usually an organism or a cell---in order to sustain its life and growth.
-Biologists are interested in how the metabolism of a system works as it is the end result of the other biological process of interest (e.g. transcription and translation).
-While ongoing work continues to develop a more robust understanding of metabolism, recent advances have begun to explore applications that involve engineering the metabolism. 
-Metabolic engineering has the potential to create novel advances in medicine and energy production~\cite{keasling2012synthetic}.
-Metabolic models are an important tools for metabolic engineers because they can be used to predict how the phenotype of an organism will respond to attempts to engineer it.
+Biologists are interested in understanding how different parts of metabolism function, as metabolic reactions are the end result of the other biological process of interest (e.g. transcription and translation).
+While ongoing work continues to develop a more robust understanding of metabolism, recent advances have begun to explore applications that involve manipulating the metabolism. 
+Metabolic engineering has the potential to create novel advances in medicine and energy production such as increased bioproduction of the antimalarial drug artemisin~\cite{keasling2012synthetic}.
+Metabolic models are an important tool for metabolic engineers because they can be used to predict how the phenotype of an organism will respond to manipulation.
 
 %TODO: fix this sentence
 Most metabolic models represent the chemical reactions in a cell with a mathematical representation of the reaction coefficients.
 Individual reactions are denoted as equations in these models.
 Mathematical constraints are placed on these reactions based on our knowledge of biological pathways.
-Models of this type are collected under the heading of \gls{cobra} models~\cite{schellenberger2011quantitative} and are very common among the metabolic engineering community~\cite{orth2010flux}.
-\gls{fba} is one of the most popular metabolic modeling techniques.
+Models of this type are collected under the heading of \gls{cobra} models~\cite{schellenberger2011quantitative} and are very common in the metabolic engineering community~\cite{orth2010flux}.
+One of the most popular constraint-based metabolic models is \gls{fba}.
 It has been used in hundreds of different works to model metabolism~\cite{feist2008growing}.
 These applications range from optimizing metabolic pathways~\cite{almaas2004global} to investigating gene networks~\cite{shlomi2007genome}.
 \gls{fba} is based on a genome-scale metabolic models (\glspl{gem}) reconstructed from the genome of an organism of interest.
 However, these \glspl{gem} describe living organisms, not cell-free systems, so typical \gls{fba} models cannot be applied out of the box to a cell-free system.
 
+In addition, since metabolism is a heterogenous mixture of reactions, small changes in the parameter space can lead to large changes in the metabolic output of a system.
+The parameter space for \gls{cfps} systems primarily consists of final concentrations of energy substrates.
+Current models are unable to explain how changes in the concentration of a certain reactant will affect the output of a \gls{cfps} system.
+Even using a modeling technique such as \gls{fba} will not solve this issue because \gls{fba} acts as a non-linear amplifier on small changes in the parameter space.
+We use a \gls{vae} to understand how the changes in the original parameter space are reflected in the output of a \gls{fba} model.
+Figure \ref{fig:fba_amp} illustrates how our system can be used to 
+
+Building this type of learning system requires datasets that explore across a biologically relevant parameter space.
+These datasets are not common, so this dissertation required extensive experimental work in order to generate data that could be used to learn a model.
+We will be also be releasing the \gls{cfps} datasets we generated to aid with further modeling work of \gls{cfps} systems.
+Additionally, performing both the experimental work and the modeling allowed us to acquire a deep understanding of the data we were generating.
+Without this understanding, building biologically relevant models would be difficult.
+
 \textbf{Cell-free systems}
 
-Cell-free Protein Synthesis (\gls{cfps}) systems are a reduced version of cells that allows these systems to produce proteins without being alive.
+A Cell-free Protein Synthesis (\gls{cfps}) system is a reduced version of a cell that produces proteins without being alive.
 The Central Dogma of biology, as enunciated by Francis Crick, is that \gls{dna} makes \gls{rna} makes protein~\cite{crick1970central}.
 While this may be a slight oversimplification, the key idea is that the production of proteins is the end goal for most biological systems.
 \gls{cfps} systems take that to an extreme by removing all endogenous \gls{dna}, \gls{rna}, and membranes while retaining the machinery for transcription and translation.
 
 A \gls{cfps} system is therefore a type of programmable matter, a veritable biological computer.
-The \gls{cfps} system acts like a computer because it can "execute" any \gls{dna} "program" that is added to the mixture.
+The \gls{cfps} system acts like a computer because it can `execute` any \gls{dna} `program` that is added to the mixture.
 The output of a \gls{cfps} system is determined by which \gls{dna} program is loaded into a cell-free system.
 This simplicity has made cell-free systems popular for a wide array of applications~\cite{hodgman2012cell, rollin2013new, carlson2012cell}.
-Additionally, cell-free systems have been shown to be extremely cheap, costing less than \$0.01 per \gls{ul} of reaction~\cite{murray2013cost}.
+Additionally, cell-free systems have been shown to be extremely cheap, costing less than \$0.01 per \gls{ul} of reaction~\cite{sun2013protocols, murray2013cost}.
 
-\gls{cfps} systems have two key aspects that make it an ideal platform to model for this dissertation.
+\gls{cfps} systems have two key aspects that make them an ideal platform to model for this dissertation.
 First of all, running experiments in a \gls{cfps} system is much faster than typical \textit{in vivo} methods because performing an experiment does not require growing cells.
-This meant that we were able to start from scratch and generate relevant data within several weeks instead of the many months or years that a cell-based system could take.
-\gls{cfps} systems are also simpler than a full cellular system, and should therefore be easier to model accurately.
-By definition, \gls{cfps} systems contain a strict subset of the reactions that occur in a cell-based system.
+This meant that we were able to start from scratch and generate relevant data within several weeks instead of the many months or years for a cell-based system.
+\gls{cfps} systems are also simpler than a full cellular system and should therefore be easier to model accurately.
+By definition, \gls{cfps} systems are composed of blended cells and contain a strict subset of the reactions that occur in a cell-based system.
 The key issue is that we do not know which reactions are included in that subset.
 
-Despite their reduced nature, \gls{cfps} systems lack good models.
-Modeling \gls{cfps} systems is difficult because \gls{cfps} systems are composed of blended cells and therefore we do not know exactly what is in the system.
-However, few prior attempts at modeling \gls{cfps} systems have used metabolic models to examine \gls{cfps} systems.
-We believe that metabolic models are a natural fit to model \gls{cfps} systems.
+The unknown composition of cell-free systems means that despite their reduced complexity, \gls{cfps} systems lack good models.
+However, prior attempts at modeling \gls{cfps} systems have used metabolic models to examine \gls{cfps} systems.
+We believe that metabolic models are a natural fit for modeling \gls{cfps} systems.
 Since \gls{cfps} are not living organisms, their effectiveness is entirely based on reaction constraints and energy regeneration.
 Thus, understanding the metabolism of these systems is extremely important.
 The few existing metabolic models for \gls{cfps} systems have been hand-constructed by a specific lab~\cite{bujara2012silico, vilkhovoy2017sequence}.
 We provide an automated system to reduce standard \glspl{gem} to metabolic models of \gls{cfps} systems.
 
-%TODO add contributions
 \textbf{Contributions}
 
 This dissertation makes a number of contributions in the field of metabolic modeling and dimensionality reduction for \gls{cfps} systems.
 \begin{itemize}
 \item We provide one of the first applications of deep learning to metabolic models.
 We show that using a \gls{vae} is more effective than \gls{pca} with regards to building a reduced metabolic model.
-Since \gls{pca} is a common dimensionality reduction technique in biology, this motivates other work applying \glspl{vae} instead of \gls{pca}..
-\item We also introduce a new loss function for \glspl{vae} that incorporates a correlation loss term.
-Although we focused specifically on using it for experimental data generated from \gls{cfps} systems, the loss function is general and could be used in any application with experimental data.
+Since \gls{pca} is a common dimensionality reduction technique in biology, this motivates other work to consider using \glspl{vae} instead of \gls{pca}.
+\item Corr-VAE is a new loss function for \glspl{vae} that incorporates a correlation loss term.
+Although Corr-VAE was developed specifically for use with experimental data generated from \gls{cfps} systems, the structure of the network does not require it to be used only with cell-free systems.
+Corr-VAE can be used in other biological application that generate experimental data and have a need for dimensionality reduction.
 \item Finally, we produce a number of new, reduced models for \gls{cfps} systems.
-These models can be used by biologists and metabolic engineers working with these \gls{cfps} systems.
+These models more accurately describe \gls{cfps} metabolism than full-scale \glspl{gem} and can be used by biologists and metabolic engineers working with these \gls{cfps} systems.
 %\item Finally, we uncovered a number of biological insights
 %\item This dissertation provides an end-to-end system to generate models for \gls{cfps} systems.
 %Given biological data generated in a lab, the computational pipeline will then produce a metabolic model for the given \gls{cfps} system.
@@ -100,15 +127,16 @@ These models can be used by biologists and metabolic engineers working with thes
 %latent representation
 We note that our approach was designed to be as general as possible, which has two key benefits.
 Our system can be applied out-of-the-box to other types of cell-free systems; i.e. systems that use cells from organisms other than \gls{ecoli}.
-Additionally, the techniques developed here for modeling cell-free systems can be applied to modeling any biological system that uses experimental data and metabolic models.
+Additionally, the techniques developed here for modeling cell-free systems can be applied to modeling other biological systems that uses experimental data and metabolic models.
 
 \textbf{Outline}
 \begin{figure}[t!]
 \begin{center}
 \includegraphics[width=\textwidth]{figs/SystemOverview.pdf}
 \end{center}
+\caption[The overall pipeline for our system]{The overall pipeline for our system.
+Given experimental data on one end, we are able to generate cell-free metabolic models.}
 \label{fig:overview}
-\caption{A figure showing the overall pipeline for the system to generate cell-free metabolic models.}
 \end{figure}
 
 The structure of this dissertation is as follows.

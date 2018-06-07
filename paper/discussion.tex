@@ -1,61 +1,55 @@
-\chapter{Discussion and Future Work} 
+\chapter{Future Work} 
 
-%TODO fix informality
-
-\section{Improved data gathering}
-As we have shown above, increasing the amount of data is useful for training a more generalizable model.
-Generating large biological datasets is difficult, but there is a movement towards greater automation of lab tasks.
-In particular, we showed that a lab robot such as the Labcyte Echo can be used to generate larger scale datasets.
+\section{Future datasets}
+The datasets that we used in this dissertation are relatively small---on the order of 10s of different parameter combinations.
+The limited scope of these datasets means that we are only able to coarsely cover the entire parameter space.
+We hypothesize that we would get better reduced models if we were able to train on larger models.
+Generating large biological datasets by hand is difficult and error prone.
+However, we demonstrated the potential for further lab automation by generating a dataset using the Labcyte Echo liquid handler.
 We encourage future work to take this even further and generate datasets with hundreds or even thousands of starting conditions.
+Another logical extension is to use datasets generated from organisms other than \gls{ecoli}.
 
 \begin{figure}[t!]
 \begin{center}
 \includegraphics{figs/Vision.pdf}
-\caption{Potential future usage for our system: converting different organism's \glspl{gem} into appropriate cell-free models.}
+\caption[Our system can generate cell-free models for any organism]
+{Our system was designed to convert any organism's \glspl{gem} into an appropriate cell-free model.
+}
 \end{center}
 \label{fig:vision}
 \end{figure}
 
-\section{Different cell types}
-We have only explored the usage of this technique on a \ecoli cell-free model.
-However, there is a lot of work currently ongoing to use non-\ecoli cell-free models.
-%TODO what needs to change to transfer to other organisms
-This system was written with generalizability in mind and should transfer to other organisms as well.
-In particular, this was the intent with creating a reduction system instead of hand-building a model from scratch.
-There are dozens of \gls{fba} models of other organisms that this could be applied to.
-Figure \ref{fig:vision} demonstrates our vision as a general purpose system for creating cell-free models.
-
-In particular, the primary author of this work is a part of an Open Plant grant which involves the exploration of using wheat-germ cell-free systems.
-The data is currently being generated through a collaboration with the Earlham Institute.
-After the data generation is done, we want to apply this to that data to see its effectiveness.
-%TODO explain
-Additionally, this system will get a web interface to encourage other biologists to use it for their own data.
-
+\section{Different Organisms}
+This work has only explored the generation of \gls{ecoli} cell-free models.
+However, much ongoing work involves the use of non-\gls{ecoli} organisms.
+This system was written in such a way that it can be applied to any organism with a \gls{gem}.
+Figure \ref{fig:vision} demonstrates our vision of how our system could be used in the future.
+Instead of creating a model by hand that only describes our \gls{cfps} system, our system can now be used to create cell-free metabolic models for many different organisms.
+In particular, the primary author of this work is a part of an OpenPlant grant involving modeling wheat-germ cell-free systems.
+The data is currently being generated, and we plan to apply our system to this new \gls{cfps} system as soon possible.
+%TODO add/explain?
+%Additionally, this system will get a web interface to encourage other biologists to use it for their own data.
 %TODO: talk about https://www.cell.com/cell-systems/pdf/S2405-4712(17)30010-8.pdf
 
+One issue is that this pipeline is only as good as the initial models.
+The initial \gls{fba} model is an imperfect description of a full \gls{ecoli} cell, so any errors in that overall model will be replicated in our reduced models.
+\gls{fba} models are periodically updated with new data.
+Our system is built to be flexible and can easily produce new models based on any updates.
+
 \section{RL system for reduction}
-One thing that we noticed while thinking about the best way to reduce the model is that we could frame the problem in terms of a reinforcement learning problem.
-We originally tried to determine which reactions to remove by hand.
-However, the way we went about this was to remove a reaction and re-run the model to see the output.
-Then, we compared how well we match the experimental data.
-So, we built a reinforcement learning framework to do this.
-Rewards are based on how well our collection of models reflects the experimental data.
-
-Simply doing a naive search with this RL framework would take far too long.
-Starting with 2600 reactions, performing a random search over this space could take up to TODO.
-Thus, we could use the \gls{vae} that we wrote in conjunction with this framework to perform a better directed search.
-This could allow us to reduce the model even further and get even more specificity in the reduction.
-
-\section{Improved starting model}
-One potential issue that is limiting the usefulness of our pipeline is how well described the initial models are.
-They're only as good as they are allowed to be by the reactions that exist.
-\gls{fba} models undergo improvements periodically and we're using the most prominent model iJO1366.
-However, as this model is updated, our model can adapt and use more up-to-date reactions.
+Our use of a \gls{vae} as a dimensionality reduction tool proved to be quite powerful, but the part of the system that converted from the reduced representation back into a \gls{fba} model was quite simple.
+We removed reactions based on a simple thresholding criterion.
+Instead of deciding which reactions to remove using a threshold, we could reframe this problem as a reinforcement learning problem.
+Using a combination of experimental data, a starting \gls{fba} model, and a latent representation of the problem space, more sophisticated search methods could likely produce better reduced models.
+To that end, we also provide a framework built on top of OpenAI's Gym environment for performing reinforcement learning on \gls{fba} models.
+Given a starting model with almost 2600 reactions, the space of possible reduced models is enormous.
+Thus, we believe a combination of our Corr-VAE and reinforcement learning could yield a better reduced model.
 
 \begin{figure}[t!]
 \begin{center}
 \includegraphics{figs/Applications.pdf}
-\caption{Two future applications of our system.
+\caption[Future applications for our system]
+{Two future applications of our system.
 Above, multiple experiments can be projected in the same subspace to better compare experimental results.
 Below, the system can help optimize the energetic composition of a cell-free system}
 \end{center}
@@ -63,20 +57,18 @@ Below, the system can help optimize the energetic composition of a cell-free sys
 \end{figure}
 
 \section{Batch variation}
-Batch variation is an important problem facing the cell-free community.
-Some studies have shown up to 20\% variation between batches for the same protocols and \gls{dna} constructs.
-This is an incredibly important issue because the typical workflow for a researcher may involve the characterization of a circuit through a series of different conditions or slightly different \gls{dna} programs.
-However, most people need to compare the performance of these variations.
-In order to deal with variation, researchers will perform all of their experiments with a single batch.
-When that batch runs out, though, they will be required to re-characterize and redo all of the experiments they have already done.
+Finally, we envision an important use for our system as a way of dealing with batch variation in \gls{cfps} systems.
+Batch variation is an important problem facing the cell-free community~\cite{sun2013protocols, chizzolini2017cell}.
+The current solution to this problem is to run everything that needs to be compared in the same batch.
+This is problematic, though, if the batch runs out or someone else wants to reproduce this result.
+The only way to deal with this problem would be to redo all of the experiments in a new batch.
 
 Figure \ref{fig:apps} shows how our system provides a potential solution to this issue of batch variation.
-A researcher runs a calibration set of experiments and then use those experiments to generate a \gls{vae} model based on that data.
-Then, any future experiments that are performed (either in the same batch or a different one) could be projected into the same latent space in order to allow comparison between the experiments.
-This would allow the translation of all of the data generated into the same subspace and allow better comparisons across batches.
+A researcher runs a calibration set of experiments and then uses those experimental results to generate a \gls{vae} model.
+Now, this \gls{vae} can be used to project any future experimental into the same latent space as the first set of experiments.
+These experiments could be compared within the latent space, or they could be transformed back into the original dimensionality of the data.
+This transformed data should allow for better comparisons across batches.
 
-%TODO: fix conclusion
-In conclusion, we have shown that deep learning techniques can be successfully applied to biology.
-In particular, computational biologists should start using \glspl{ae} (especially \glspl{vae}) for dimensionality reduction instead of automatically defaulting to using \gls{pca}.
-The loss function that we developed for our \gls{vae} is general enough to be used with any form of biological data.
-We hope this work encourages other computational biologists to continue work integrating deep learning with biology in general and metabolic models specifically.
+% Generative nature of VAEs
+% Can generate "typical" fluxes for a subspace
+% Traverse the subspace 

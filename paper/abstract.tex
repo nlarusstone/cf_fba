@@ -1,13 +1,24 @@
 \newpage
+\dissertationtitle
 {\Huge \bf Abstract}
 \vspace{24pt} 
 
-%TODO: write abstract
-This is the abstract. Write a summary of the whole thing. Make 
-sure it fits in one page. 
+\gls{cfps} systems are a promising platform for a variety of synthetic biology applications.
+These systems are simpler, faster to experiment with, and cheaper than comparable \textit{in vivo} approaches.
+Despite their relative simplicity, \gls{cfps} systems lack the computational metabolic models of cell-based systems.
+This dissertation provides the first end-to-end system, called \gls{sys}, that reduces a cell-based metabolic model into a \gls{cfps} model based on experimental data.
+This type of model is useful for biologists who want to understand what reactions are important in their \gls{cfps} systems.
 
-Programmable matter (the synthetic biology aspect)
+Through the creation of a system to generate these reduced models, I contribute a number of advances to the field of computational metabolic modeling and deep learning.
+As one of the first applications of deep learning to metabolic modeling, \gls{sys} provides a groundwork for further exploration at the intersection of these fields.
+In particular, I show that although \gls{pca} is a popular dimensionality reduction technique in computational biology, \glspl{vae} can find non-linear relationships that \gls{pca} cannot.
+I also describe a \gls{vae} that we call Corr-VAE that uses a custom loss function to discover better low dimensional representations than a naive \gls{vae}.
+This loss function enables our system to generate metabolic models that are sensitive to different experimental conditions.
 
+This dissertation explores the use of \gls{sys} to create \gls{ecoli} \gls{cfps} models, but has  was designed \gls{sys} to create \gls{cfps} models for any type of \gls{cfps} system.
+While Corr-VAE was designed to solve a problem relating to \gls{cfps} systems, it can be used in any biological application that generates experimental data.
+Although our system was built using data from \gls{ecoli} \gls{cfps} systems, our system can be applied to \gls{cfps} systems derived from any organism that has a \gls{gem}.
+This work will lead to new ways to configure and monitor cell-free systems and will be useful to wet lab biologists.
 
 \newpage
 \vspace*{\fill}
