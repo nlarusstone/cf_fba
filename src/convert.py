@@ -4,6 +4,7 @@ import os
 import re
 import Bio.PDB.Polypeptide as pdb
 import cobra
+import pandas as pd
 import cf_io
 from constants import varner_to_ijo
 import fba_utils as futils
@@ -126,8 +127,16 @@ def add_txtl_rxns(model, txtl_rxns):
     return mod
 
 def convert_to_cf_model(model_f, add_txtl, obj='BIOMASS_Ec_iJO1366_core_53p95M', cfps_sys='nls', conc_file=None):
-    print 'Generate final concentrations'
-    cfps_conc = cf_io.get_conc(cfps_final=conc_file)
+    final_concs_fname = '../bio_models/{0}/final_concs.csv'.format(cfps_sys)
+    if os.path.exists(final_concs_fname):
+        print 'Read in final concentrations'
+        cfps_conc = pd.read_csv(final_concs_fname, index=compound)
+    else:
+        print 'Generate final concentrations'
+        cfps_conc = cf_io.get_conc(cfps_final=conc_file)
+        print 'Writing out CFPS system "{0}" concentrations to {1}'.format(cfps_sys, final_concs_fname)
+        cfps_conc.to_csv(path_or_buf=final_concs_fname)
+
     model_base = model_f.rsplit('/', 1)[1].rsplit('.', 1)[0]
     print 'Read in GEM: {0}'.format(model_base)
     if model_f.endswith('json'):
@@ -159,10 +168,6 @@ def convert_to_cf_model(model_f, add_txtl, obj='BIOMASS_Ec_iJO1366_core_53p95M',
     cf_model_fname = '../bio_models/{0}/{1}_cf{2}.sbml'.format(cfps_sys, model_base, '_txtl' if add_txtl else '')
     print 'Writing out cf_model to {0}'.format(cf_model_fname)
     cobra.io.write_sbml_model(filename=cf_model_fname, cobra_model=model_cf)
-
-    final_concs_fname = '../bio_models/{0}/final_concs.csv'.format(cfps_sys)
-    print 'Writing out CFPS system "{0}" concentrations to {1}'.format(cfps_sys, final_concs_fname)
-    cfps_conc.to_csv(path_or_buf=final_concs_fname)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create cell free model')

@@ -269,3 +269,16 @@ def gen_train_test(data, y=None):
     else:
         return train_test_split(data, random_state=42)
 
+def add_noise(biased_resamp_data, enc, gen):
+    noise_arr = np.logspace(start=-5, stop=1, num=10)
+    corrs = []
+    for noise in noise_arr:
+        noisy_data = biased_resamp_data.copy()
+        for i in range(n_experiments):
+            s = noisy_data[:, i, :].shape
+            noisy_data[:, i, :] += np.random.normal(scale=noise, size=s)
+            #noisy_data[:, i, :] = minmax_scale(noisy_data[:, i, :])
+        #scaled_noisy_data = scale_by_flux(noisy_data)
+        corr = pred(noisy_data, enc, gen)
+        corrs.append(corr)
+    return zip(noise_arr, corrs) + [(0, pred(biased_resamp_data, enc, gen))]

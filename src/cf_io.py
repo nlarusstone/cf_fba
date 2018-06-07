@@ -67,6 +67,8 @@ def get_exp_data(froot):
         conds_avg = conds_full.groupby('index').mean()
         conds_norm = conds_avg
         conds_norm['OUT'] = conds_norm['OUT'] / conds_norm['OUT'].max()
+        if 'level_0' in conds_norm.columns:
+            conds_norm.drop('level_0', axis=1, inplace=True)
     conds_norm.to_csv('../data/{0}_EXPERIMENT.csv'.format(froot))
     return conds_norm
 
@@ -78,7 +80,7 @@ def get_test_data(froot, txtl, resamp, latent_dim, layer_szs, use_corr=True, n_e
     if froot == 'karim':
         assert(not txtl)
     fname = 'epochs={0}_batch={1}_dimension={2}_corr={3}_scale={4}_froot={5}_txtl={6}_nlayers={7}_resamp={8}{9}.h5'.format(
-        n_epochs, batch_size, latent_dim, use_corr, scale, froot, txtl, len(layer_szs), resamp, '_lastlayer=1024' if layer_szs[-1] == 1024 else '')
+        n_epochs, batch_size, latent_dim, use_corr, scale, froot, txtl, len(layer_szs), resamp, '_lastlayer={0}'.format(layer_szs[-1]) if layer_szs[-1] != 256 else '')
     print('Load models {0}'.format('../models/encoder_' + fname))
     encoder = load_model('../models/encoder_{0}'.format(fname))
     generator = load_model('../models/generator_{0}'.format(fname))

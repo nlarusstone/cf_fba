@@ -76,4 +76,4 @@ if __name__ == '__main__':
         print model_i.medium
         if args.samps > 0:
             samples_i = sample(model_i, args.samps, processes=multiprocessing.cpu_count() - 1)
-            samples_i.to_csv('../data/f{0}/{1}/{2}/{3}_fluxes_{4}'.format(args.samps, args.dataset, args.froot, model_f_base, idx)
+            samples_i.to_csv('../data/f{0}/{1}/{2}/{3}_fluxes_{4}'.format(args.samps, args.dataset, args.froot, model_f_base, idx))

@@ -165,16 +165,6 @@ if __name__ == '__main__':
     latent_dim = args.dim
     layer_szs = args.layers
 
-    #df = pd.read_csv('../data/Karim_MetEng_2018_Figure2_Data.csv')
-    #df.drop(columns=['Area_1', 'Area_2', 'Conc_1', 'Conc_2'], inplace=True)
-    #n_experiments = df.shape[0]
-
-    #dat = np.load('../data/fluxes_resampled.npz')
-    #X_train, X_test = dat['train'], dat['test']
-    #X_train, y_train, X_test, y_test, btol_col, cols = futils.read_data('../data/flux_samps_2k', scale=scale)
-
-    if args.froot == 'karim' and args.txtl:
-        quit()
     fname = '../data/{0}{1}_{2}_fluxes'.format(args.froot, '_txtl' if args.txtl else '', 'stacked' if args.resamp else 'flat')
     X_train, y_train, X_test, y_test, obj_col, cols, y_vals_d = dataset.get_dataset(fname)
     y_vals = np.array(y_vals_d)
@@ -182,26 +172,18 @@ if __name__ == '__main__':
     X_shape, n_experiments = X_train.shape[-1], y_vals.shape[0]
     targets = tf.convert_to_tensor(y_vals, dtype=tf.float32)
     vae, encoder, generator = build_vae(X_shape, n_experiments, targets, obj_col.value, layer_szs, latent_dim, batch_size, use_corr, scale, flat)
+    model_fname = 'epochs={0}_batch={1}_dimension={2}_corr={3}_scale={4}_froot={5}_txtl={6}_nlayers={7}_resamp={8}_lastlayer={9}.h5'.format(n_epochs, batch_size, latent_dim, use_corr, scale, args.froot, args.txtl, len(layer_szs), args.resamp, layer_szs[-1])
     es = EarlyStopping(patience=10)
-    cbs = [es]
+    mc = ModelCheckpoint('../models/vae_' + model_fname, save_best_only=True)
+    cbs = [es, mc]
     if use_corr:
         lh = LossHistory()
         cbs.append(lh)
     vae.fit(X_train, shuffle='batch', epochs=n_epochs, batch_size=batch_size,
             validation_data=(X_test, None), callbacks=cbs)
-    fname = 'epochs={0}_batch={1}_dimension={2}_corr={3}_scale={4}_froot={5}_txtl={6}_nlayers={7}_resamp={8}_lastlayer={9}.h5'.format(n_epochs, batch_size, latent_dim, use_corr, scale, args.froot, args.txtl, len(layer_szs), args.resamp, layer_szs[-1])
-    vae.save('../models/vae_{0}'.format(fname))
-    encoder.save('../models/encoder_{0}'.format(fname))
-    generator.save('../models/generator_{0}'.format(fname))
+    vae.save('../models/vae_{0}'.format(model_fname))
+    encoder.save('../models/encoder_{0}'.format(model_fname))
+    generator.save('../models/generator_{0}'.format(model_fname))
     if use_corr:
-        with open('../models/losses_{0}'.format(fname), 'w') as f:
+        with open('../models/losses_{0}'.format(model_fname), 'w') as f:
             pickle.dump(file=f, obj={'recon_losses': lh.recon_losses, 'kl_losses': lh.kl_losses, 'corr_losses': lh.corr_losses})
-
-    x_test_encoded = encoder.predict(X_test, batch_size=batch_size)
-    x_test_gen = generator.predict(x_test_encoded, batch_size=batch_size)
-
-    corrs = []
-    for i in range(x_test_gen.shape[0]):
-        corr = scipy.stats.pearsonr(x_test_gen[i, :, obj_col.value],)
-        corrs.append(corr)
-    print 'Mean correlation: ', np.mean(corrs, axis=0)
