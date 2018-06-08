@@ -1,5 +1,10 @@
 \chapter{Design and Implementation} \label{chap:impl}
 
+<<<<<<< HEAD
+=======
+%FOCUS ON BIOLOGISTS/USABILITY
+
+>>>>>>> d36f4c58ce53756c4208d542755ca45e64177c23
 The primary deliverable of this dissertation is a system, \gls{sys} (shown in Figure \ref{fig:overview}) that is able to generate metabolic models of cell-free systems.
 This chapter decomposes \gls{sys} into its four main parts.
 First, \gls{sys} ingests experimental data and converts it into a standardized format.
@@ -184,6 +189,14 @@ This earlier work created the \gls{fba} model by hand and is written in Julia.
 \gls{sys} provides auxiliary tools to, given the sequence of the gene of interest, automatically generate a relevant version of the Varner model.
 That model is converted to Python and the relevant transcription and translation reactions are extracted.
 Those reactions are then incorporated into the base cell-free model, creating a TXTL cell-free model.
+<<<<<<< HEAD
+=======
+
+%As a linear programming problem, we also need to set a custom objective to optimize for.
+%Usually this is the biomass objective, which encapsulates everything necessary for bacterial growth.
+%However, since we don't care about growth, just production, we can use our own objectives.
+%For us, the typical objective will be the production of some protein since that's the purpose of the \gls{cfps}.
+>>>>>>> d36f4c58ce53756c4208d542755ca45e64177c23
 
 \section{Dataset generation}
 
