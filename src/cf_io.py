@@ -4,6 +4,8 @@ import pandas as pd
 import datasets
 import utils
 
+# Creates the final concentration file for a cell-free setup
+# Can either accept a csv of this format, or a combination of csvs that describe the energy, aa, and cfps components
 def get_conc(aa_f='../data/aa_mix.csv', nrg_f='../data/energy_mix.csv', cfps_start='../data/cfps_start.csv', seq_f='../genes/rfp.txt', cfps_final=None,
                 rxn_amt=5, batch_size=50):
     n_batch = batch_size / rxn_amt
@@ -34,8 +36,10 @@ def get_conc(aa_f='../data/aa_mix.csv', nrg_f='../data/energy_mix.csv', cfps_sta
         cfps_conc['final_conc'] = utils.conc_dilution(cfps_conc['start_conc'], cfps_conc['amt'], rxn_amt)
     return cfps_conc
 
+# Loads experimental data
+# Currently built to work with the experimental datasets that we have gathered, but only requires a few changes
+# to make it broadly extensible
 def get_exp_data(froot):
-    # '../data/17_5_18_T7_mRFP_NLS.CSV'
     if froot == 'karim':
         df = pd.read_csv('../data/{0}_data.CSV'.format(froot))
         conds_norm = df
@@ -55,7 +59,6 @@ def get_exp_data(froot):
         
         gain2 = gain_diff
         outs = df[gain2:gain2+gain_diff - 1].mean(axis=0)
-        # '../data/17_5_18_exp_conditions.csv'
         conds = pd.read_csv('../data/{0}_exp_conditions.csv'.format(froot))
         if froot == 'manual':
             conds.drop(conds.shape[0] - 1, inplace=True)
@@ -72,6 +75,7 @@ def get_exp_data(froot):
     conds_norm.to_csv('../data/{0}_EXPERIMENT.csv'.format(froot))
     return conds_norm
 
+# Given the parameters of a VAE, retrieves the encoder and decoder as well as the relevant test dataset
 def get_test_data(froot, txtl, resamp, latent_dim, layer_szs, use_corr=True, n_epochs=200, batch_size=256, scale='flux_zero'):
     from keras.models import load_model
     flat = not resamp
@@ -99,6 +103,9 @@ def get_test_data(froot, txtl, resamp, latent_dim, layer_szs, use_corr=True, n_e
 
     return encoder, generator, X_test, y_test, obj_col, cols, y_vals_d, test_enc, test_dec
 
+# Reads in a flux dataset and splits it into a train and test dataset.
+# Can generate a flat dataset (resamp=False) or a stacked dataset
+# Scales the flux data if required
 def read_flux_data(dir_name, flux_root, n_experiments, obj_name, resamp=True, scale=None, n_rows=50000):
     flux_dfs = []
     obj_col = None

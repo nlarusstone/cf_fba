@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import cf_io
 import flux_utils as futils
+import utils
 
 parser = argparse.ArgumentParser(description='Sample fluxes from different CF models')
 parser.add_argument('-d', '--dataset', type=str, default='nls')
@@ -14,10 +15,11 @@ parser.add_argument('--no-resamp', dest='resamp', help='Dont resample', action='
 parser.add_argument('-t', '--txtl', dest='txtl', default=False, action='store_true')
 parser.add_argument('--no-txtl', dest='txtl', action='store_false')
 
+# Creates a h5py dataset of fluxes
 def create_dataset(fname, X_train, X_test, obj_col, cols, y_vals, y_train=None, y_test=None):
     h5f = h5py.File(fname, 'w')
-    h5f.create_dataset('X_train', data=X_train)#, type=np.float32)
-    h5f.create_dataset('X_test', data=X_test)#, type=np.float32)
+    h5f.create_dataset('X_train', data=X_train)
+    h5f.create_dataset('X_test', data=X_test)
     if not y_train is None:
         h5f.create_dataset('y_train', data=y_train)
         h5f.create_dataset('y_test', data=y_test)
@@ -26,6 +28,7 @@ def create_dataset(fname, X_train, X_test, obj_col, cols, y_vals, y_train=None, 
     h5f.create_dataset('y_vals', data=list(y_vals))
     h5f.close()
 
+# Reads in a h5py dataset of fluxes
 def get_dataset(fname):
     h5f = h5py.File(fname, 'r')
     X_train, X_test = h5f['X_train'], h5f['X_test']

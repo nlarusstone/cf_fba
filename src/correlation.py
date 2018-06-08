@@ -1,6 +1,8 @@
 import argparse
 import cobra
+import numpy as np
 import pandas as pd
+import scipy.stats
 import cf_io
 
 parser = argparse.ArgumentParser(description='Sample fluxes from different CF models')
@@ -9,18 +11,22 @@ parser.add_argument('-f', '--froot', type=str, default='manual')
 parser.add_argument('-m', '--model', type=str, default='iJO1366')
 parser.add_argument('-t', '--txtl', dest='txtl', help='Toggle to add txtl reactions', default=False, action='store_true')
 parser.add_argument('--no-txtl', dest='txtl', help='Toggle to not add txtl reactions', action='store_false')
+#parser.add_argument('-o', '--opt', type=str)
 
-def optimized_corr(model_f, df, test_dec):
-    thresh = np.logspace(start=-2, stop=-1, num=20)
+# Performs simple thresholding using the output of a VAE to reduce GEMs to cell-free models.
+def optimized_corr(model_f, df, test_dec, cols, t_low=-2, t_high=-1, n_steps=20):
+    thresh = np.logspace(start=t_low, stop=t_high, num=n_steps)
     bad_rxns_t = []
     res = []
+    best = (0, None)
+    model_f_base = model_f.rsplit('.', 1)
     for t in thresh:
         print t
         objs = []
         bad_rxns = []
         for idx, row in df.iterrows():
-            model_f_i = '{0}_ecoli_cf_base{1}_{2}.sbml'.format(dset, '_txtl' if txtl else '', idx)
-            model_i = cobra.io.read_sbml_model('../models/{0}/'.format(froot) + model_f_i)
+            model_f_i = model_f_base[0] + '_{0}.'.format(idx) + model_f_base[1]
+            model_i = cobra.io.read_sbml_model(model_f_i)
             obj_name = str(model_i.objective.expression.args[0]).split('*')[1]
             dec_df = pd.DataFrame(data=test_dec[:, idx, :], columns=cols)
             bad_cols = cols[dec_df.mean() < t]
@@ -30,9 +36,15 @@ def optimized_corr(model_f, df, test_dec):
             sol = model_i.optimize()
             objs.append(sol.objective_value)
         bad_rxns_t.append(bad_rxns)
-        print scipy.stats.pearsonr(objs, df['OUT'])
+        corr = scipy.stats.pearsonr(objs, df['OUT'])
+        print corr
+        if abs(corr[0]) > best[0]:
+            best = (abs(corr[0]), bad_cols)
         res.append(objs)
+    print 'Best: {0}'.format(best[0])
+    return pd.DataFrame(res), pd.DataFrame(bad_rxns_t), pd.DataFrame(best[1])
 
+# For base CFPS-like GEMs, calculates their correlation with experimental data
 def unoptimized_corr(model_f, df):
     res = []
     for idx, row in df.iterrows():

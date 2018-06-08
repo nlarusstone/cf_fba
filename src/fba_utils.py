@@ -2,6 +2,7 @@ import re
 import Bio.PDB.Polypeptide as pdb
 import cobra
 
+# Gets the metabolite associated with an amino acid
 def get_aa_metab(model, aa, cmpt='c'):
     return model.metabolites.query('{0}__._{1}'.format(aa, cmpt))
 
@@ -35,6 +36,7 @@ def change_obj(model, metab=None, rxn=None):
         print 'Need to specify either a metabolite or reaction as an objective'
         raise Exception
 
+# Change the concentration of exchange reactions to a given cell-free setup
 def change_conc(model, cfps_conc):
     mod = model.copy()
     
@@ -52,8 +54,6 @@ def change_conc(model, cfps_conc):
             rxn = mod.reactions.get_by_id(rxn_nm)
             rxn.lower_bound = -1 * flux
             rxn.upper_bound = flux
-            #mod.add_boundary(metabolite=m, type='exchange', lb=0, ub=flux)
-            #mod.add_boundary(metabolite=m, type='cfps-medium', reaction_id=rxn_nm, lb=0, ub=flux) 
     return mod
 
 # Based on MetaboTools

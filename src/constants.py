@@ -1,3 +1,4 @@
+# Map from Varner terminology to BiGG keys
 varner_to_ijo = {'5pbdra': 'pram',
                 'faicar': 'fprica',
                 '78dhf': 'dhpt',

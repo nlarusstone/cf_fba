@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cf_io
 
+# Compare reconstructed standard deviations to the original standard deviations
 def plt_stds(rxns, stds, recon):
     plt.scatter(rxns, stds)
     plt.ylabel('Std deviation of fluxes')
@@ -10,6 +11,7 @@ def plt_stds(rxns, stds, recon):
     plt.title('Standard deviation of {0}fluxes'.format('reconstructed ' if recon else ''))
     plt.show()
 
+# Plots the correlation between our generated fluxes and the experimental dataset as we increase noise
 def plt_noise_corr(noise_data, orig_corr, ndim=2):
     orig_enc, noise_data = noise_data[-1], noise_data[:-1]
     plt.figure(figsize=(10, 8))
@@ -24,6 +26,7 @@ def plt_noise_corr(noise_data, orig_corr, ndim=2):
     plt.legend()
     plt.show()
 
+# Code to plot the latent space of a VAE or PCA
 def plt_latent_space(encoded_data, df, ax, y_test=None, flat=False, dim_1=0, dim_2=1, samp_range=None,
                      color_scheme='tab20', sz=60, legend=True, label='Dimension'):
     if ax is None:
@@ -69,6 +72,7 @@ def plt_latent_space(encoded_data, df, ax, y_test=None, flat=False, dim_1=0, dim
     ax.set_xlabel('{0} {1}'.format(label, dim_1))
     ax.set_ylabel('{0} {1}'.format(label, dim_2))
 
+# Compares a flat VAE to a stacked VAE
 def compare_flat_stacked(df, test_enc, test_enc_f, y_test_f):
     fig, axarr = plt.subplots(nrows=1, ncols=2, figsize=(14, 8))
     plt_latent_space(test_enc_f, df, axarr[0], flat=True, y_test=y_test_f, samp_range=(0, 1000), legend=False)
