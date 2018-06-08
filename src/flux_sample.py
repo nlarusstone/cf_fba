@@ -1,5 +1,6 @@
 import argparse
 import multiprocessing
+import os
 import Bio.PDB.Polypeptide as pdb
 import cobra
 from cobra.flux_analysis import sample
@@ -7,6 +8,7 @@ import numpy as np
 import pandas as pd
 import cf_io
 import fba_utils as futils
+import utils
 
 parser = argparse.ArgumentParser(description='Sample fluxes from different CF models')
 parser.add_argument('-s', '--samps', metavar='s', type=int, help='Number of samples, set to 0 if you want to generate models without sampling', default=0)
@@ -19,6 +21,7 @@ parser.add_argument('-b', '--batch_size', type=int, default=50, help='Total amou
 parser.add_argument('-t', '--txtl', dest='txtl', help='Toggle to add txtl reactions', default=False, action='store_true')
 parser.add_argument('--no-txtl', dest='txtl', help='Toggle to not add txtl reactions', action='store_false')
 
+# Helper function to change the exchange reactions of a model
 def update_vals(cfps_conc_tmp, row, n_batches, nrg_mix=None, replace=False):
     for col in row.index[:-1]:
         if col == 'nts':
@@ -47,9 +50,7 @@ if __name__ == '__main__':
 
     print 'Read in data'
     df = cf_io.get_exp_data(args.froot)
-    #df.drop(columns=['Area_1', 'Area_2', 'Conc_1', 'Conc_2'], inplace=True)
-
-    cfps_conc = pd.read_csv('../data/{0}_concs'.format(args.dataset), index_col='compound')
+    cfps_conc = pd.read_csv('../bio_models/{0}/final_concs.csv'.format(args.dataset), index_col='compound')
     if not args.froot == 'karim':
         cfps_conc.drop('final_conc', inplace=True, axis=1)
         nrg_mix = pd.read_csv('../data/energy_mix.csv', index_col='compound')
@@ -57,10 +58,15 @@ if __name__ == '__main__':
         nrg_mix = None
 
     print 'Generate model specific conditions'
-    model_f_base = '{0}_cf{1}.sbml'.format(args.model, '_txtl' if args.txtl else '')
-    model_f = '../bio_models/{0}/{1}'.format(args.dataset, model_f_base)
+    model_base = '{0}_cf{1}.sbml'.format(args.model, '_txtl' if args.txtl else '')
+    model_f = '../bio_models/{0}/{1}'.format(args.dataset, model_base)
+    model_i_base = '../bio_models/{0}/{1}/{2}'.format(args.dataset, args.froot, model_base)
     model = cobra.io.read_sbml_model(model_f)
     print 'Model {0} read in'.format(model_f)
+    if not os.path.exists('../bio_models/{0}/{1}/'.format(args.dataset, args.froot)):
+        os.makedirs('../bio_models/{0}/{1}/'.format(args.dataset, args.froot))
+    if not os.path.exists('../data/f{0}/{1}/{2}/'.format(args.samps, args.dataset, args.froot)):
+        os.makedirs('../data/f{0}/{1}/{2}/'.format(args.samps, args.dataset, args.froot))
     for idx, row in df.iterrows():
         print idx
         cfps_conc_tmp = cfps_conc.copy()
@@ -70,10 +76,10 @@ if __name__ == '__main__':
             exp_concs = cfps_conc_tmp['final_conc']
         else:
             exp_concs = utils.conc_dilution(cfps_conc_tmp['start_conc'], (rxn_amt / 5.0) * cfps_conc_tmp['amt'], tot_rxn_amt)
-        model_i = change_conc(model, exp_concs)
-        model_f_base = model_f.rsplit('.', 1)[0]
-        cobra.io.write_sbml_model(filename='../bio_models/{0}/{1}/{2}'.format(args.dataset, args.froot, model_f_base + '_' + str(idx) + '.sbml'), cobra_model=model_i)
+        model_i = futils.change_conc(model, exp_concs)
+        model_i_prefix = model_i_base.rsplit('.', 1)[0]
+        cobra.io.write_sbml_model(filename=model_i_prefix + '_' + str(idx) + '.sbml', cobra_model=model_i)
         print model_i.medium
         if args.samps > 0:
             samples_i = sample(model_i, args.samps, processes=multiprocessing.cpu_count() - 1)
-            samples_i.to_csv('../data/f{0}/{1}/{2}/{3}_fluxes_{4}'.format(args.samps, args.dataset, args.froot, model_f_base, idx))
+            samples_i.to_csv('../data/f{0}/{1}/{2}/{3}_fluxes_{4}'.format(args.samps, args.dataset, args.froot, model_base, idx))

@@ -1,6 +1,7 @@
 import json
 import os
 
+# Converts a Varner reaction to a COBRApy reaction
 def convert_rxn(julia_rxn, debug_dict):
     rxn_name = julia_rxn['reaction_name']
     debug_entry = debug_dict[rxn_name]
@@ -15,6 +16,7 @@ def convert_rxn(julia_rxn, debug_dict):
     }
     return cobra_rxn
 
+# Converts a Varner metabolite to a COBRApy metabolite
 def convert_metab(julia_metab, atom_dict):
     sym = julia_metab['species_symbol']
     cobra_metab = {
@@ -25,6 +27,7 @@ def convert_metab(julia_metab, atom_dict):
     }
     return cobra_metab
 
+# Associates metabolite formulas with the name
 def parse_atom_file(f_atom):
     atom_dict = {}
     with open(f_atom, 'r') as f:
@@ -33,11 +36,12 @@ def parse_atom_file(f_atom):
             if len(l) < 7:
                 continue
             metab_name = l[0]
-            metab_formula = 'C{0}H{1}N{2}O{3}P{4}S{5}'.format(*[l[i] for i in range(1, 7)])
             #C,H,N,O,P,S
+            metab_formula = 'C{0}H{1}N{2}O{3}P{4}S{5}'.format(*[l[i] for i in range(1, 7)])
             atom_dict[metab_name] = metab_formula
     return atom_dict
 
+# Adds bounds to the reactions
 def parse_bounds(f_bounds, rxn_dict, idx_map):
     with open(f_bounds, 'r') as f_bounds:
         if f_bounds == 'DataDictionary.jl':
@@ -63,6 +67,7 @@ def parse_bounds(f_bounds, rxn_dict, idx_map):
                 rxn_dict[rxn_name]['upper_bound'] = ub
     return rxn_dict
             
+# Associates reaction strings with their bounds
 def parse_debug_file(f_debug, f_bounds):
     rxn_dict = {}
     idx_map = {}
@@ -79,11 +84,12 @@ def parse_debug_file(f_debug, f_bounds):
     rxn_dict = parse_bounds(f_bounds, rxn_dict, idx_map)
     return rxn_dict
 
+# Main function that converts a Julia Varner model to a COBRApy model
 def julia_to_cobra_json(folder, fout=None):
     f_atom = os.path.join(folder, 'Atom.txt')
     atom_dict = parse_atom_file(f_atom)
     f_debug = os.path.join(folder, 'Debug.txt')
-    f_bounds = os.path.join(folder, 'Bounds.txt') #DataDictionary.jl#Bounds.txt
+    f_bounds = os.path.join(folder, 'Bounds.txt')
     rxn_dict = parse_debug_file(f_debug, f_bounds)
     f_model = os.path.join(folder, 'Reactions.json')
     with open(f_model, 'r') as f:

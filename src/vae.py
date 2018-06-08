@@ -1,7 +1,7 @@
 import keras
 from keras.models import Sequential, Model
 from keras.layers import Input, Dense, Activation, Lambda
-from keras.callbacks import EarlyStopping, Callback
+from keras.callbacks import EarlyStopping, Callback, ModelCheckpoint
 from keras import backend as K
 from keras import metrics
 import numpy as np
@@ -29,15 +29,15 @@ parser.add_argument('-n', '--epochs', metavar='n', type=int, help='Number of epo
 parser.add_argument('--corr', dest='corr', help='Correlation loss', default=True, action='store_true')
 parser.add_argument('--no-corr', dest='corr', help='Correlation loss', action='store_false')
 parser.add_argument('-s', '--scale', metavar='s', type=str, default='flux_zero', help='type of data scaling')
-parser.add_argument('-l','--layers', nargs='+', help='Layer sizes', type=int, default=[1024])
-
-
+parser.add_argument('-l','--layers', nargs='+', help='Layer sizes', type=int, default=[1024, 1024, 1024])
 parser.add_argument('-f', '--froot', type=str, default='hand')
 parser.add_argument('-r', '--resamp', dest='resamp', help='Resample', default=False, action='store_true')
 parser.add_argument('--no-resamp', dest='resamp', help='Dont resample', action='store_false')
 parser.add_argument('-t', '--txtl', dest='txtl', default=False, action='store_true')
 parser.add_argument('--no-txtl', dest='txtl', action='store_false')
 
+# Custom callback to track all parts of our custom loss function:
+# reconstruction loss, KL divergence, and correlation
 class LossHistory(Callback):
     def __init__(self):
         self.recon_losses = []
@@ -62,6 +62,7 @@ class LossHistory(Callback):
         self.kl_losses.append(np.mean(kl_loss))
         self.corr_losses.append(cor_loss)
 
+# Used to sample from the latent space
 def sampling(args):
     epsilon_std = 1.0
     z_mean, z_log_var = args
@@ -73,6 +74,7 @@ def sampling(args):
                                   stddev=epsilon_std)
     return z_mean + K.exp(z_log_var / 2) * epsilon
 
+# Differentiable correlation function used as part of Corr-VAEs loss function
 def corr_loss(y_pred, y_true, be=K):
     cent_pred = y_pred - be.mean(y_pred)
     cent_tr = y_true - be.mean(y_true)
@@ -82,20 +84,24 @@ def corr_loss(y_pred, y_true, be=K):
 
     return be.mean(cent_pred*cent_tr)/(std_pred*std_tr)
 
+# Calculate KL divergence for a normal function
+# From https://github.com/keras-team/keras/blob/master/examples/variational_autoencoder.py
 def calc_kl_loss(z_log_var, z_mean):
     return - 0.5 * K.sum(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
 
+# Builds the actual VAE as specified by the parameters
+# If use_corr is True, this is a Corr-VAE
 def build_vae(X_shape, n_experiments, targets, output_ind, layer_sizes=[256], latent_dim=2, batch_size=256, use_corr=True, scale_type=None, flat=False):
     # Encoder network
     if flat:
         x = Input(shape=(X_shape,))
     else:
         x = Input(shape=(n_experiments, X_shape,))
-    h = Dense(layer_sizes[0], activation='relu')(x)
+    hidden = Dense(layer_sizes[0], activation='relu')(x)
     for layer_sz in layer_sizes[1:]:
-        h = Dense(layer_sz, activation='relu')(h)
-    z_mean = Dense(latent_dim, name='z_mean')(h)
-    z_log_var = Dense(latent_dim, name='z_log_var')(h)
+        hidden = Dense(layer_sz, activation='relu')(hidden)
+    z_mean = Dense(latent_dim, name='z_mean')(hidden)
+    z_log_var = Dense(latent_dim, name='z_log_var')(hidden)
     
     # Sample points from latent space
     if flat:
@@ -104,7 +110,7 @@ def build_vae(X_shape, n_experiments, targets, output_ind, layer_sizes=[256], la
         z = Lambda(sampling, output_shape=(n_experiments,latent_dim,))([z_mean, z_log_var])
     
     # Decoder network
-    decoder_h = Dense(layer_sizes[-1], activation='relu')
+    decoder_first = Dense(layer_sizes[-1], activation='relu')
     decoder_layers = []
     for layer_sz in layer_sizes[::-1][1:]:
         decoder_layers.append(Dense(layer_sz, activation='relu'))
@@ -116,10 +122,10 @@ def build_vae(X_shape, n_experiments, targets, output_ind, layer_sizes=[256], la
         act = 'linear'
     print act
     decoder_mean = Dense(X_shape, activation=act)
-    h_decoded = decoder_h(z)
+    hidden_decoded = decoder_first(z)
     for decoder_layer in decoder_layers:
-        h_decoded = decoder_layer(h_decoded)
-    x_decoded_mean = decoder_mean(h_decoded)
+        hidden_decoded = decoder_layer(hidden_decoded)
+    x_decoded_mean = decoder_mean(hidden_decoded)
 
     # end-to-end autoencoder
     vae = Model(x, x_decoded_mean)
@@ -131,7 +137,6 @@ def build_vae(X_shape, n_experiments, targets, output_ind, layer_sizes=[256], la
     vae_loss = K.mean(xent_loss + kl_loss_val)
     if use_corr:
         vae_loss += experiment_loss
-    #vae_loss = K.sum(vae_loss)
     vae.add_loss(vae_loss)
     vae.compile(optimizer='rmsprop')
     vae.summary()
@@ -139,15 +144,15 @@ def build_vae(X_shape, n_experiments, targets, output_ind, layer_sizes=[256], la
     # encoder, from inputs to latent space
     encoder = Model(x, z_mean)
 
-    # generator, from latent space to reconstructed inputs
+    # decoder, from latent space to reconstructed inputs
     if flat:
         decoder_input = Input(shape=(latent_dim,))
     else:
         decoder_input = Input(shape=(n_experiments, latent_dim,))
-    _h_decoded = decoder_h(decoder_input)
+    _hidden_decoded = decoder_first(decoder_input)
     for decoder_layer in decoder_layers:
-        _h_decoded = decoder_layer(_h_decoded)
-    _x_decoded_mean = decoder_mean(_h_decoded)
+        _hidden_decoded = decoder_layer(_hidden_decoded)
+    _x_decoded_mean = decoder_mean(_hidden_decoded)
     generator = Model(decoder_input, _x_decoded_mean)
     return vae, encoder, generator
 

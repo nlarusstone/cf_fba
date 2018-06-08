@@ -1,0 +1,12 @@
+# Files
+- cf_io: the main IO file. Loads and writes the CFPS experimental setups and experimental data. Also used to read in flux data and trained VAEs.
+- convert: contains the functions that convert a regular GEM into something that more closely resembles a CFPS.
+- correlation: used to assess our models by calculating how well the generated models describe actual experimental data.
+- datasets: create or write a flux dataset.
+- fba_utils: general utility functions for FBA models. Contains code to manipulate objective functions, concentrations, and fluxes.
+- flux_sample: creates the unique models based on experimental conditions from a base model and then samples flux datasets from them.
+- julia_to_cobra: helper code to convert Varner models written in Julia to COBRApy models.
+- plotting: tools to make plots of the latent spaces of PCA and VAEs
+- threshold: used in conjuction with correlation.py, produces the reduced GEMs based on a trained VAE
+- utils: miscellaneous tools for use with FBA models and flux datasets
+- vae: all code relating to VAEs
