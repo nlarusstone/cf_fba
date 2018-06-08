@@ -1,11 +1,22 @@
-\chapter{Experimental Setup}\label{app:exp}
+\appendix
+\chapter{Experimental Setup}
+\label{app:exp}
 
-\begin{table}[]
+\section{Buffers}
+To create S30A buffer, combine 10.88g Mg-glutamate, 24.39g mM K-glutamate, 50 mL Tris and titrate with acetic acid to reach pH 7.7.
+Add water to 2L and autoclave.
+Before using, add 4 ml of 1 M DTT.
+
+For S30B buffer, combine 10.88g mM Mg-glutamate, 24.39g mM K-glutamate, and titrate with 2M Tris until pH 8.2.
+Add water to 2L and autoclave.
+Add 2 ml of 1 M DTT before using.
+
+\section{Supplementary Tables}
+
+\begin{table}[h!]
 \centering
-\caption{Final concentrations of reactants in our \gls{cfps} reaction}
-\label{tab:cf-conc}
 \begin{tabular}{ll}
-Compound     & Concentration (\gls{mm}) \\
+Compound     & Concentration (\gls{mm}) \\ \hline
 \gls{hmp}           & 0.981              \\
 \gls{mg}           & 5.92               \\
 \gls{k}           & 48.0               \\
@@ -21,4 +32,65 @@ CTP/UTP      & 1.26               \\
 \gls{trna}        & 0.010              \\
 \gls{dna}          & 0.071             
 \end{tabular}
+\caption{Final concentrations of reactants in our \gls{cfps} reaction}
+\label{tab:cf-conc}
 \end{table}
+
+\begin{longtable}{lll | l}
+Sugar & \glspl{aa} & \glspl{ntp} & Normalized output   \\ \hline
+0        & 0     & 200   & 0.43 \\
+12.5     & 12.5  & 187.5 & 0.48 \\
+25       & 25    & 175   & 0.53 \\
+37.5     & 37.5  & 162.5 & 0.95 \\
+50       & 50    & 150   & 0.68 \\
+62.5     & 62.5  & 137.5 & 0.83 \\
+75       & 75    & 125   & 0.54 \\
+87.5     & 87.5  & 112.5 & 0.45 \\
+100      & 100   & 100   & 0.43 \\
+112.5    & 112.5 & 87.5  & 0.48 \\
+125      & 125   & 75    & 0.48 \\
+137.5    & 137.5 & 62.5  & 0.87 \\
+150      & 150   & 50    & 0.77 \\
+162.5    & 162.5 & 37.5  & 0.86 \\
+175      & 175   & 25    & 0.81 \\
+187.5    & 187.5 & 12.5  & 0.69 \\
+200      & 200   & 0     & 0.43 \\
+0        & 200   & 100   & 0.79 \\
+12.5     & 187.5 & 112.5 & 0.65 \\
+25       & 175   & 125   & 0.52 \\
+37.5     & 162.5 & 137.5 & 0.68 \\
+50       & 150   & 150   & 0.49 \\
+62.5     & 137.5 & 162.5 & 0.53 \\
+75       & 125   & 175   & 0.82 \\
+87.5     & 112.5 & 187.5 & 0.92 \\
+100      & 100   & 200   & 0.65 \\
+112.5    & 87.5  & 0     & 0.47 \\
+125      & 75    & 12.5  & 0.47 \\
+137.5    & 62.5  & 25    & 0.66 \\
+150      & 50    & 37.5  & 0.54 \\
+162.5    & 37.5  & 50    & 0.44 \\
+175      & 25    & 62.5  & 0.71 \\
+187.5    & 12.5  & 75    & 0.89 \\
+200      & 0     & 87.5  & 1.00 \\
+0        & 100   & 0     & 0.58 \\
+12.5     & 112.5 & 12.5  & 0.42 \\
+25       & 125   & 25    & 0.60 \\
+37.5     & 137.5 & 37.5  & 0.70 \\
+50       & 150   & 50    & 0.57 \\
+62.5     & 162.5 & 62.5  & 0.53 \\
+75       & 175   & 75    & 0.75 \\
+87.5     & 187.5 & 87.5  & 0.68 \\
+100      & 200   & 100   & 0.65 \\
+112.5    & 0     & 112.5 & 0.44 \\
+125      & 12.5  & 125   & 0.57 \\
+137.5    & 25    & 137.5 & 0.59 \\
+150      & 37.5  & 150   & 0.72 \\
+162.5    & 50    & 162.5 & 0.69 \\
+175      & 62.5  & 175   & 0.42 \\
+187.5    & 75    & 187.5 & 0.61 \\
+200      & 87.5  & 200   & 0.75 \\
+\caption[Different reaction concentrations for our Echo dataset]{Different reaction concentrations for our Echo dataset.
+Reactant columns are measured in \gls{nl}, while the output column has been normalized by the maximum level of fluorescence observed.
+Each experiment was repeated $n = 2$ times at a total volume of 2.5 \gls{ul}}
+\label{tab:echo}
+\end{longtable}
