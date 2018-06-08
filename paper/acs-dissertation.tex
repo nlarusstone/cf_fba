@@ -12,13 +12,15 @@
 \def\authorcollege{Queens' College\xspace}
 \def\authoremail{nl363@cl.cam.ac.uk}
 \def\dissertationtitle{Building a cell-free metabolic model using variational autoencoders}
-\def\wordcount{0}
-\def\ecoli{\textit{E. coli}~}
+\def\wordcount{10698}
+\def\ecoli{\textit{E. coli}}
 
 \usepackage{epsfig,graphicx,parskip,setspace,tabularx,xspace} 
 \usepackage{gensymb}
 \usepackage[acronym]{glossaries}
+\usepackage[toc,page]{appendix}
 \usepackage{url}
+\usepackage{longtable}
 
 \makeglossaries
 
@@ -31,6 +33,8 @@
 \singlespacing
 \input{titlepage}
 \onehalfspacing
+\input{acknowledgements}
+\onehalfspacing
 \input{declaration}
 \singlespacing
 \input{abstract}
@@ -39,9 +43,8 @@
 \setcounter{page}{0}
 \pagestyle{plain}
 \tableofcontents
-{\listoffigures \let\cleardoublepage\clearpage \listoftables}
-%\listoffigures
-%\listoftables
+\listoffigures
+\listoftables
 \printglossaries
 
 %\let\cleardoublepage\cleardoublepage
@@ -64,8 +67,8 @@
 
 \include{conclusion}
 
-\appendix
-%\include{appendix}
+%\appendix
+\include{appendix}
 \singlespacing
 
 \bibliographystyle{unsrt} 

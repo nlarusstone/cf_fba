@@ -1,14 +1,13 @@
 \chapter{Related Work} \label{chap:rw}
 This chapter introduces related work in the relevant fields of computer science and biological modeling.
-In particular, we examine work in the field of building metabolic models using flux balance analysis.
-Next, we present a collection of automatic reduction systems for metabolic models.
-However, none of these reduction systems have been applied to modeling cell-free systems.
-We then examine what types of models have been used to model cell-free systems.
-Finally, we investigate recent work on variational autoencoders.
+I begin by examining work in the field of building metabolic models using flux balance analysis.
+Next, I present a collection of automatic reduction systems for metabolic models, none of which have been applied to modeling cell-free systems.
+I then examine what types of models have been used to model cell-free systems.
+Finally, I investigate recent work on using variational autoencoders in biology and applying correlation loss terms to \glspl{vae}.
 
 \section{Flux Balance Analysis}
 Early metabolic models in the 1980s pioneered the use of stoichiometric equations to describe a biological system and predict the yield of a specific product~\cite{papoutsakis1984equations}.
-These models soon adopted the use of \gls{lp} to solve for the optimal result~\cite{fell1986fat}.
+These models soon adopted the use of Linear Programming (\gls{lp}) to solve for the optimal result~\cite{fell1986fat}.
 After the transition to \gls{lp} solvers, this field was referred to as constraint-based analysis, while the primary technique used to solve these equations was called \gls{fba}.
 These techniques were soon applied to describe the main metabolic systems in \gls{ecoli}~\cite{majewski1990simple}.
 Importantly, \gls{fba} has repeatedly been shown to predict phenotypes that corresponded to real-world data~\cite{varma1994stoichiometric, edwards2001silico, segre2002analysis, bordbar2014constraint}.
@@ -17,18 +16,15 @@ Improvements on these early models have primarily focused on the addition of new
 After the first \gls{ecoli} genome was sequenced and annotated, the size of these models grew rapidly.
 The earliest genome scale model (\gls{gem}) for \gls{ecoli} was iJE660a, a model that described 627 unique reactions in a typical \gls{ecoli} cell~\cite{edwards2000escherichia}.
 Over the years, more and more reactions have been progressively added to the model to better describe the biology.
-This work will use the most recent \gls{ecoli} \gls{gem}, iJO1366 from 2011, which contains 2583 reactions~\cite{orth2011comprehensive}.
+This work uses the most recent \gls{ecoli} \gls{gem}, iJO1366 from 2011, which contains 2583 reactions~\cite{orth2011comprehensive}.
 Since 2011, work in this field has primarily focused on extending metabolic models to incorporate other types of biological information.
 For instance, recent work has involved the addition of gene expression data to create \glspl{me}~\cite{lloyd2017cobrame}.
 This has drastically increased the dimensionality and complexity of the model: the most recent \gls{me}, iJL1678-ME has 79871 reactions.
 
-%There has also been a sizable amount of research done on extensions to \gls{fba}.
-%People have added thermodynamic constains 
-
 \section{Reduction of metabolic models}
 As these \glspl{gem} begin to incorporate even more information, the models begin to suffer from the curse of dimensionality~\cite{bellman2013dynamic}.
 %One issue with using a full \gls{gem} is the extremely high dimensionality due to the fact that every reaction occurring in a cell is detailed.
-To deal with this issue, a number of papers have tried to reduced these genome scale models to their most essential reactions.
+To deal with this issue, a number of papers have tried to reduce these genome scale models to their most essential reactions.
 The Hatzimanikatis lab has developed multiple tools to reduce the dimensionality of these models.
 redGEM finds core metabolic models by performing a graph search where the objective is to minimize information loss~\cite{ataman2017redgem}.
 lumpGEM also uses graph search techniques to identify and collapses entire reaction networks into a single balanced reaction~\cite{ataman2017lumpgem}.
@@ -41,7 +37,7 @@ The methods above use some sort of search technique to find minimal core models 
 However, there has also been work that uses general dimensionality reduction techniques such as \gls{pca}.
 This idea has been incorporated into a reduction technique called \gls{pema}~\cite{von2016principal}.
 \gls{pema} identifies subnetworks that maximize the observed variance similar to how the principal components of \gls{pca} work.
-A more recent method called "Principal metabolic flux mode analysis" explicitly incorporates \gls{pca} and \gls{fba}~\cite{bhadra2017principal}.
+A more recent method called ``Principal metabolic flux mode analysis" explicitly incorporates \gls{pca} and \gls{fba}~\cite{bhadra2017principal}.
 It reduces the dimensionality of the system by running a form of \gls{pca} on the stoichiometric matrix that is regularized by the steady state assumption from \gls{fba}.
 
 %TODO: add reference to https://www.cell.com/cell-systems/pdf/S2405-4712(17)30010-8.pdf
@@ -50,13 +46,12 @@ It reduces the dimensionality of the system by running a form of \gls{pca} on th
 %Bayesian \gls{fba}
 %Network models on \gls{fba}
 
-%TODO: Fix up paragraph
-Our methods differ from these earlier reduction techniques in a few ways.
-Everyone so far has constrained themselves to looking at linear techniques of dimensionality reduction.
-Not all relationships are linear and there are limits to how well linear models can perform.
-We approach the problem differently by using nonlinear techniques and deep learning to reduce metabolic models.
-In addition, these techniques all deal with the stoichiometric matrix of the system without having actual experimental data to learn from.
-Finally, none of the techniques above have specifically targeted \gls{cfps} systems.
+This work differs from these earlier reduction techniques in a few ways.
+Prior work so far has been constrained to looking at linear techniques of dimensionality reduction.
+Many biological relationships are non-linear, so there are limits to how well linear models can perform.
+I approach the problem of reducing metabolic models differently by using nonlinear techniques and deep learning.
+In addition, the techniques above all deal with the stoichiometric matrix of the system without using real experimental data.
+Finally, none of the techniques above have specifically targeted building models for \gls{cfps} systems.
 
 \section{Modeling cell-free systems}\label{rw:mod-cf}
 Models of cell-free systems have typically been based on kinetic models of transcription and translation.
@@ -73,7 +68,6 @@ The authors decided which parts of the full model were relevant for cell-free sy
 A more recent attempt took a bottom-up approach to building a \gls{fba} model for cell-free systems~\cite{vilkhovoy2017sequence}.
 Instead of removing reactions from the full \gls{ecoli} \gls{gem} until they had a cell-free model, the authors instead selected the reactions they believed to be most important for protein synthesis.
 Since protein synthesis is the main goal of \gls{cfps} systems, they were able to use these reactions to build an accurate cell-free \gls{fba} model.
-%Importantly, their model is 'sequence specific', meaning it is tailored to the specific gene product of the cell-free system.
 These models show that it is possible to use \gls{fba} to describe cell-free systems.
 However, neither approach is able to construct cell-free systems in a systematic way that could scale to other labs or other organisms.
 
@@ -96,4 +90,5 @@ Specifically, work has also been done to incorporate correlation loss terms with
 Correlation Neural Networks were first introduced as a way to make \glspl{ae} more effective on multi-modal data such as labeled images~\cite{chandar2016correlational}.
 By maximizing the correlation between the latent representations for each view of the data, the authors were able to improve performance.
 This idea has been expanded in Relational Neural Networks, which also looks at correlation within the data to affect the \gls{ae} loss term~\cite{meng2017relational}.
-Our Corr-VAE also introduces a correlation loss term, but our correlation is based on external experimental data.
+All of these papers use correlations within the dataset or latent representation of the \gls{ae}.
+I introduce a new type of \gls{vae}, Corr-VAE, which uses a correlation loss term with respect to external experimental data.
