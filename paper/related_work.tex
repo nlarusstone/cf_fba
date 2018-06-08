@@ -40,12 +40,6 @@ This idea has been incorporated into a reduction technique called \gls{pema}~\ci
 A more recent method called ``Principal metabolic flux mode analysis" explicitly incorporates \gls{pca} and \gls{fba}~\cite{bhadra2017principal}.
 It reduces the dimensionality of the system by running a form of \gls{pca} on the stoichiometric matrix that is regularized by the steady state assumption from \gls{fba}.
 
-%TODO: add reference to https://www.cell.com/cell-systems/pdf/S2405-4712(17)30010-8.pdf
-% CITE Network-based analysis of metabolic regulation in the human red blood cell
-% CITE  new constraint-based description of the steady-state flux cone of metabolic networks
-%Bayesian \gls{fba}
-%Network models on \gls{fba}
-
 This work differs from these earlier reduction techniques in a few ways.
 Prior work so far has been constrained to looking at linear techniques of dimensionality reduction.
 Many biological relationships are non-linear, so there are limits to how well linear models can perform.
@@ -71,13 +65,10 @@ Since protein synthesis is the main goal of \gls{cfps} systems, they were able t
 These models show that it is possible to use \gls{fba} to describe cell-free systems.
 However, neither approach is able to construct cell-free systems in a systematic way that could scale to other labs or other organisms.
 
-%Hybrid agent-based model for quantitative in-silico cell-free protein synthesis. 2016
-%https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5288458/
 
 \section{Variational autoencoders}
 Autoencoders have been around for many years, but \glspl{vae} were first introduced in 2013~\cite{kingma2013auto, rezende2014stochastic}.
 Since their introduction, \glspl{vae} have been used for everything from transferring image features~\cite{larsen2015autoencoding} to molecule generation~\cite{gomez2016automatic}.
-%Due to their ability to function as generative networks, much of the work in the field has focused on applying \glspl{vae} to generate synthetic images.
 \glspl{ae}, and \glspl{vae} in particular, have only just begun making their way into analyzing biological data.
 The typical dimensionality reduction technique in biology is \gls{pca}~\cite{ringner2008principal}.
 However, recent work has begun to explore the uses of \glspl{vae} on biological data.
@@ -85,7 +76,6 @@ One study examined cancer transcriptomics data using a \gls{vae} to extract mean
 Another work showed that a \gls{vae} was able to separate tissue types based on mass spectrometry data \cite{inglese2017variational}.
 These papers have used the original structure and loss function for their \glspl{vae}, but there have also been development of new types of \glspl{vae}.
 
-%Also introduced by ~\cite{rezende2014stochastic}
 Specifically, work has also been done to incorporate correlation loss terms with \glspl{ae}.
 Correlation Neural Networks were first introduced as a way to make \glspl{ae} more effective on multi-modal data such as labeled images~\cite{chandar2016correlational}.
 By maximizing the correlation between the latent representations for each view of the data, the authors were able to improve performance.

@@ -19,8 +19,8 @@ To that end, I introduce \gls{sys}, an end-to-end system that produces metabolic
 These reduced models are produced through the use of a Variational Autoencoder (\gls{vae}) on top of a common metabolic modeling technique called Flux Balance Analysis (\gls{fba}).
 In order to incorporate experimental data into the model, I also introduce a new \gls{vae} loss function based on correlation that I call a Corr-VAE.
 The Corr-VAE perturbs the latent space of a \gls{vae} to better fit the experimental data.
-%TODO: fix sentence
 \gls{sys} can be used by biologists to navigate the parameter space of different starting conditions, cope with batch variation, and gain a deeper understand of the composition of cell-free systems.
+The code for \gls{sys} can be found at \textbf{\url{https://github.com/nlarusstone/cf\_fba}}.
 
 \begin{figure}[t!]
 \begin{center}
@@ -122,24 +122,10 @@ Given an experimental setup and experimental data, \gls{sys} generates a reduced
 \end{figure}
 
 The structure of this dissertation is as follows.
-%TODO add back in?
 Chapter \ref{chap:bkg} provides background information on cell-free systems, \gls{fba}, and \glspl{vae}.
-%We describe the different types of cell-free systems, how we produce our system, and some uses and advantages for cell-free systems.
-%Then, we explore the mathematical foundations of \gls{fba} and how it can be used to model biological systems.
-%Finally, we explain how autoencoders are used for dimensionality reduction, specifically focusing on how VAEs work.
 Chapter \ref{chap:rw} introduces related work in the fields of metabolic models, reduction of metabolic models, modeling cell-free systems, and \glspl{vae}.
-%We analyze the current state of the art in metabolic modeling, specifically focusing on the development of \gls{fba} and the creation of a GEM for \ecoli.
-%Next, we focus on how search techniques have been used to reduce metabolic models to their core reactions.
-%Then, we share efforts to model cell-free systems, describing two prior works that have applied \gls{fba} to cell-free systems.
-%Finally, we outline the relevant literature about VAEs.
 Chapter \ref{chap:impl} describes \gls{sys}, the system I have built to generate \gls{cfps} models (shown in Figure \ref{fig:overview}).
-%We begin by describing our experimental setup and how we generated our data.
-%Next, we detail how to ingest the experimental setup and data and convert it into a metabolic model.
-%Then, we explain how we used that model to generate a larger dataset for our deep learning algorithms.
-%Lastly, we use that dataset to train a VAE, which generates a lower dimensionality representation that can be used to create better cell-free metabolic models.
 Chapter \ref{chap:res} examines the results of using a \gls{vae} to reduce \gls{fba} models.
 Notably, I show that the reduced models \gls{sys} produces are better at describing \gls{cfps} systems than both \glspl{gem} and already published reduced models.
-%We also show novel biological insights that were unearthed due to my system.
-%Finally, we illustrate how a model can be learned on one set of biological data and transfer to a different set of data. 
 Chapter \ref{chap:fw} discusses future work and provides suggestions of how this work may be utilized.
 The final chapter concludes with an overview of the project and its key advances.

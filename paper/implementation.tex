@@ -1,7 +1,5 @@
 \chapter{Design and Implementation} \label{chap:impl}
 
-%FOCUS ON BIOLOGISTS/USABILITY
-
 The primary deliverable of this dissertation is a system, \gls{sys} (shown in Figure \ref{fig:overview}) that is able to generate metabolic models of cell-free systems.
 This chapter decomposes \gls{sys} into its four main parts.
 First, \gls{sys} ingests experimental data and converts it into a standardized format.
@@ -187,11 +185,6 @@ This earlier work created the \gls{fba} model by hand and is written in Julia.
 That model is converted to Python and the relevant transcription and translation reactions are extracted.
 Those reactions are then incorporated into the base cell-free model, creating a TXTL cell-free model.
 
-%As a linear programming problem, we also need to set a custom objective to optimize for.
-%Usually this is the biomass objective, which encapsulates everything necessary for bacterial growth.
-%However, since we don't care about growth, just production, we can use our own objectives.
-%For us, the typical objective will be the production of some protein since that's the purpose of the \gls{cfps}.
-
 \section{Dataset generation}
 
 \subsection{Model generation}
@@ -234,8 +227,6 @@ Flux sampling is the process of sampling possible fluxes through each reaction.
 For each model, this generates a distribution of fluxes for every reaction in that model.
 Figure \ref{fig:distrib} shows the average distribution of fluxes for each sample and each reaction.
 Flux sampling is implemented using the optGpSampler routine~\cite{megchelenbrink2014optgpsampler}.
-%Figure \ref{fig:fl-samps} shows what happens as we increase the number of samples we draw from each model.
-%Clearly, we can see that increasing the number of samples leads to a more normal distribution.
 
 Each model has different experimental conditions and therefore has slightly different flux distributions for each reaction.
 So, after generating flux samples for each model, these sampled fluxes are combined to generate two new datasets.

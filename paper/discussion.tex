@@ -28,11 +28,6 @@ Instead of creating a model by hand that only describes our \gls{cfps} system, \
 In particular, I am also a part of an OpenPlant grant involving modeling wheat-germ cell-free systems.
 The data is currently being generated, and I plan to apply \gls{sys} to this new \gls{cfps} system as soon possible.
 
-%One issue is that this pipeline is only as good as the initial models.
-%The initial \gls{fba} model is an imperfect description of a full \gls{ecoli} cell, so any errors in that overall model will be replicated in our reduced models.
-%\gls{fba} models are periodically updated with new data.
-%Our system is built to be flexible and can easily produce new models based on any updates.
-
 \section{RL system for reduction}
 The use of a \gls{vae} as a dimensionality reduction tool proved to be quite powerful, but the part of the system that converted from the reduced representation back into a \gls{fba} model was quite simple.
 \gls{sys} removes reactions based on a simple thresholding criterion.
@@ -65,7 +60,3 @@ A researcher runs a calibration set of experiments and then uses those experimen
 Now, this \gls{vae} can be used to project any future experimental data into the same latent space as the first set of experiments.
 These experiments could be compared within the latent space, or they could be transformed back into the original dimensionality of the data and then compared.
 This transformed data should allow for better comparisons across batches.
-
-% Generative nature of VAEs
-% Can generate "typical" fluxes for a subspace
-% Traverse the subspace 
