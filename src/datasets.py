@@ -3,7 +3,6 @@ import h5py
 import numpy as np
 import pandas as pd
 import cf_io
-import flux_utils as futils
 import utils
 
 parser = argparse.ArgumentParser(description='Sample fluxes from different CF models')

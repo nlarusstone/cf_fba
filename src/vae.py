@@ -15,7 +15,6 @@ from functools import partial
 from sklearn.preprocessing import maxabs_scale, minmax_scale, normalize, scale, robust_scale
 import argparse
 import pickle
-import flux_utils as futils
 import create_dataset as dataset
 np.random.seed(42)
 
